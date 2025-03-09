@@ -1,0 +1,22 @@
+<div class="grid grid-cols-1 h-screen bg-white">
+  <!-- Main Content -->
+  <div class="flex h-[calc(100vh)] px-2">
+    <app-sidebar class="w-[233px] h-full" (hideSideBar)="showSidebar = false"></app-sidebar>
+
+
+    <!-- Content Area -->
+    <main class="flex-grow container px-2 overflow-y-scroll">
+      <div class="grid grid-cols-1">
+        <!-- Header -->
+        <div class="h-[50px] w-full">
+          <app-header></app-header>
+        </div>
+        <div class="h-[calc(100vh-51px)] bg-[#F8F8F8] p-2">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+</div>

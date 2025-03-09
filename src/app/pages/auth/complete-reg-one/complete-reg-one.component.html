@@ -1,0 +1,59 @@
+<div class="flex justify-center h-full">
+  <div class="w-full px-4 md:px-0 max-w-md flex flex-col justify-center items-center gap-y-8">
+    <p class="font-bold text-2xl text-center text-primary">
+      Welcome to Smart Scribbl!
+    </p>
+
+    <p class="text-center text-grey text-lg">
+      Begin by sharing your writing requirements with us
+    </p>
+
+    <!-- Progress Bar -->
+    <div class="flex justify-center items-center gap-x-4 w-full">
+      <div class="flex-1 h-3 bg-primary rounded-md"></div>
+      <div class="flex-1 h-3 bg-gray-500 rounded-md"></div>
+      <div class="flex-1 h-3 bg-gray-500 rounded-md"></div>
+      <div class="flex-1 h-3 bg-gray-500 rounded-md"></div>
+    </div>
+
+    <p class="font-bold text-xl">The majority of my writing is intended for:</p>
+
+    @if (errorMessage()) {
+    <p class="text-red-500 text-center text-lg">
+      {{ errorMessage() }}
+    </p>
+    }
+
+    <p class="text-grey text-sm">Make your choice below</p>
+
+    <div class="flex gap-2 justify-center flex-wrap md:flex-nowrap ">
+      @for (option of options(); track option.id) {
+      <div>
+        <input (input)="toggleSelection(option.id)" type="checkbox" [checked]="selectedOptions().has(option.id)"
+          [id]="option.intention" class="hidden peer">
+        <label [for]="option.intention"
+          class="flex gap-x-2 justify-center items-center font-medium text-sm px-12 py-4 text-grey border rounded-full cursor-pointer peer-checked:bg-primary peer-checked:text-white transition">
+          <svg width="15" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_644_2358)">
+              <path
+                d="M13.7158 7H8.71582V2C8.71582 1.86739 8.66314 1.74021 8.56937 1.64645C8.47561 1.55268 8.34843 1.5 8.21582 1.5V1.5C8.08321 1.5 7.95604 1.55268 7.86227 1.64645C7.7685 1.74021 7.71582 1.86739 7.71582 2V7H2.71582C2.58321 7 2.45604 7.05268 2.36227 7.14645C2.2685 7.24021 2.21582 7.36739 2.21582 7.5V7.5C2.21582 7.63261 2.2685 7.75979 2.36227 7.85355C2.45604 7.94732 2.58321 8 2.71582 8H7.71582V13C7.71582 13.1326 7.7685 13.2598 7.86227 13.3536C7.95604 13.4473 8.08321 13.5 8.21582 13.5C8.34843 13.5 8.47561 13.4473 8.56937 13.3536C8.66314 13.2598 8.71582 13.1326 8.71582 13V8H13.7158C13.8484 8 13.9756 7.94732 14.0694 7.85355C14.1631 7.75979 14.2158 7.63261 14.2158 7.5C14.2158 7.36739 14.1631 7.24021 14.0694 7.14645C13.9756 7.05268 13.8484 7 13.7158 7Z"
+                fill="currentColor" />
+            </g>
+            <defs>
+              <clipPath id="clip0_644_2358">
+                <rect width="12" height="12" fill="white" transform="translate(2.21582 1.5)" />
+              </clipPath>
+            </defs>
+          </svg>
+          <span class="text-nowrap">
+            {{ option.intention }}
+          </span>
+        </label>
+      </div>
+      }
+    </div>
+
+    <app-button (click)="onSave()" [buttonDisabled]="isSaving()" [loading]="isSaving()" inputClass="!w-full"
+      class="w-full">Continue</app-button>
+  </div>
+</div>

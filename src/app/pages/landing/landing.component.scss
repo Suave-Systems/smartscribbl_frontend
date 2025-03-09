@@ -1,0 +1,26 @@
+.banner {
+  background: url(../../../assets/svg/right_illustration.svg);
+  background-repeat: no-repeat;
+  background-position: top right;
+}
+
+.newsletter {
+  background-image: url(../../../assets/svg/newsletter_shape.svg),
+    url(../../../assets/svg/newsletter_shape_2.svg);
+  background-repeat: no-repeat, no-repeat;
+  background-position: top left, bottom right;
+}
+
+.get_started_button::after {
+  content: url(../../../assets/svg/get_started_arrow.svg);
+  position: absolute;
+  top: -170px;
+  right: -270px;
+}
+
+.choose_plan::after {
+  content: url(../../../assets/svg/plans_arrow.svg);
+  position: absolute;
+  top: -30px;
+  right: -200px;
+}

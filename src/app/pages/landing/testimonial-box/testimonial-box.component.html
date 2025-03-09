@@ -1,0 +1,18 @@
+<div class="flex flex-col md:flex-row justify-center items-center gap-[2rem]">
+  <div class="flex-none">
+    <ng-content select="[img]"></ng-content>
+  </div>
+  <div class="flex-auto">
+    <p class="text-[16px]/[25px]">
+      <ng-content select="[what]"></ng-content>
+    </p>
+    <div class="flex gap-x-4">
+      <span class="font-semibold text-[14px]/[22.5px] mt-[1rem]">
+        <ng-content select="[who]"></ng-content>
+      </span>
+      <span class="text-grey text-[14px]/[22.5px] mt-[1rem]">
+        <ng-content select="[where]"></ng-content>
+      </span>
+    </div>
+  </div>
+</div>

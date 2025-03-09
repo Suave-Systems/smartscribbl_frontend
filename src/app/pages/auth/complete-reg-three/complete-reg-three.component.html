@@ -1,0 +1,37 @@
+<div class="flex justify-center h-full">
+  <div class="w-full  md:w-1/2 px-4 md:px-0 flex flex-col justify-center items-center gap-y-8">
+
+    <div class="md:px-[8rem] flex justify-center items-center gap-x-4 w-full">
+      <div class="flex-1 h-3 bg-primary rounded-md"></div>
+      <div class="flex-1 h-3 bg-primary rounded-md"></div>
+      <div class="flex-1 h-3 bg-primary rounded-md"></div>
+      <div class="flex-1 h-3 bg-[#989898] rounded-md"></div>
+    </div>
+
+    <p class="font-bold text-[1.25rem]/[1.5rem]">
+      I want Smart Scribbl to help me:
+    </p>
+    <p class="text-grey text-[14px]">Make your choice below</p>
+
+    <div class="grid grid-cols-2 gap-2">
+      @for (option of options; track option) {
+      <div>
+        <input type="checkbox" [id]="option" class="hidden peer">
+        <label for="{{option}}"
+          class="flex gap-x-2 justify-center font-medium text-[12px]/[20px] px-[3rem] py-[1rem] text-grey border rounded-full cursor-pointer peer-checked:bg-primary peer-checked:text-white transition">
+          <span class="text-nowrap">
+            {{option}}
+          </span>
+        </label>
+      </div>
+      }
+
+
+    </div>
+
+
+    <app-button [routerLink]="['/auth/otp']" routerLinkActive="router-link-active" inputClass="!w-full"
+      class="w-full md:px-[8rem]">Continue</app-button>
+
+  </div>
+</div>

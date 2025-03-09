@@ -1,0 +1,287 @@
+<section class="banner p-4 md:px-8 md:py-4">
+  <app-nav></app-nav>
+  <div class="py-20 md:py-[10rem]">
+    <div class="flex flex-col items-center justify-center md:px-[20rem]">
+      <p class="font-extrabold text-3xl md:text-[52.22px]/[59px] text-center">Elevate and transform your writing with
+        Smart Scribbl
+      </p>
+      <div class="p-[2.5rem] md:px-[11rem] flex flex-col md:flex-row items-center gap-x-2">
+        <img src="assets/banner_writters.png" alt="multiple avatar of writers">
+        <p class="text-center md:text-start text-[16.21px]/[25.21px]">
+          Join <span class="font-semibold">4600+ Writers</span> and start enhancing your
+          writing.
+        </p>
+      </div>
+    </div>
+
+    <div class="flex justify-center pt-[6rem]">
+      <app-button [routerLink]="['/auth/signup']" routerLinkActive="router-link-active"
+        class="relative md:get_started_button">
+        Get Started
+      </app-button>
+    </div>
+
+    <p class="text-center text-[#747474] font-semibold text-[12.8px]/[20px] pt-[11rem]">Trusted By</p>
+    <div class="flex items-center justify-center gap-x-4 mt-10">
+      <img src="assets/writtersco_logo.png" alt="writtersco logo">
+      <img src="assets/ye_network_logo.png" alt="ye network logo">
+    </div>
+  </div>
+
+</section>
+
+<section class="p-8 md:p-[8.5rem]">
+  <div class="md:px-[11.5rem]">
+    <p class="text-primary text-center font-bold text-3xl md:text-[2.5rem]/[3.25rem]"> Powerful Features</p>
+    <p class="text-center text-gray">
+      Transform your writing with our advanced spelling corrector and article refiner. Perfect for students,
+      professionals, and anyone who wants to communicate clearly and effectively.
+    </p>
+  </div>
+
+  <div class="feature-grid grid grid-cols-1 md:grid-cols-3 mt-[4rem]">
+    <app-feature-box class="md:border-r border-b border-[#E4E4E7]">
+      <img img src="assets/svg/grammar_checker.svg" alt="">
+      <p featureTitle>Grammar Checker</p>
+      <p featureDescription>
+        Identify and correct grammatical errors effortlessly, ensuring your writing is polished and
+        professional.
+      </p>
+    </app-feature-box>
+
+    <app-feature-box class="md:border-r border-b border-[#E4E4E7]">
+      <img img src="../../../assets/svg/ai_refinement.svg" alt="">
+      <p featureTitle>AI Refinement</p>
+      <p featureDescription>
+        Simply input your content, and let our AI polish it to perfection, ensuring readability, coherence, and a
+        professional touch.
+      </p>
+    </app-feature-box>
+
+    <app-feature-box class="border-b border-[#E4E4E7]">
+
+      <img img src="../../../assets/svg/style_suggestions.svg" alt="">
+      <p featureTitle>Style Suggestions</p>
+      <p featureDescription>
+        Receive personalized style recommendations to improve clarity, engagement, and overall quality.
+      </p>
+    </app-feature-box>
+
+    <app-feature-box class="md:border-r border-b md:border-b-0 border-[#E4E4E7]">
+      <img img src="../../../assets/svg/vocab_enhance.svg" alt="">
+      <p featureTitle>Vocabulary Enhancement</p>
+      <p featureDescription>
+        Expand your vocabulary with suggestions for more impactful words and phrases.
+      </p>
+    </app-feature-box>
+
+    <app-feature-box class="border-b md:border-b-0 md:border-r border-[#E4E4E7]">
+      <img img src="../../../assets/svg/writting_insights.svg" alt="">
+      <p featureTitle>Writing Insights</p>
+      <p featureDescription>
+        Get detailed insights into your writing habits and areas for improvement.
+      </p>
+    </app-feature-box>
+
+    <app-feature-box>
+      <img img src="../../../assets/svg/customizable.svg" alt="">
+      <p featureTitle>Customizable Settings</p>
+      <p featureDescription>
+        Tailor the tool to fit your unique writing style and preferences.
+      </p>
+    </app-feature-box>
+
+  </div>
+</section>
+
+<section class="section">
+  <img src="../../../assets/section.png" alt="">
+</section>
+
+<section class="py-[4rem]">
+  <p class="text-primary text-center font-bold text-3xl md:text-[2.5rem]/[3.25rem]">
+    Affordable Plans
+  </p>
+
+  <p class="text-center text-[20px]/[26px] mt-[1rem]">
+    Choose a plan that’s right for you
+  </p>
+
+  <div class="mt-8 flex items-center justify-center">
+    <div class="md:choose_plan relative flex gap-x-8 items-center justify-center">
+
+      <p class="text-[14px]">Pay Monthly </p>
+
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" class="sr-only peer" />
+        <div class="w-10 h-5 bg-gray-300  rounded-full peer peer-checked:bg-primary
+                    after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:w-3 after:h-3 after:rounded-full
+                    after:transition-all peer-checked:after:translate-x-5"></div>
+      </label>
+      <p class="text-[14px]">Pay Yearly</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-[1.5rem] px-4 md:px-[8rem]">
+
+    <div class="pricing-card rounded-[2rem] mt-8 border border-[#E7E7E7] p-[1.5rem]">
+      <p class="font-bold text-[22px]/[26.4px]">Basic</p>
+      <p class="text-grey">Perfect for casual users who need essential grammar and spell-checking.</p>
+      <p class="my-[1.5rem]">
+        <span class="price font-bolder text-[3.5rem]/[4.125rem]">
+          N0
+        </span>
+        <span class="duration">
+          / Month
+        </span>
+      </p>
+
+      <app-button [inputClass]="'!w-full !bg-white !text-primary !border !py-[0.5rem]'">
+        Get Started Now
+      </app-button>
+
+      <ul class="mt-[2.5rem] space-y-3">
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Basic grammar and spell check</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Spelling suggestions</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Punctuation correction</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Limited AI-based word suggestions</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">500-word limit per check</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Web and Browser Extension</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/no_list_style.svg" alt="">
+          <span class="text-[16px]/[19.2px] text-grey">No plagiarism detection</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/no_list_style.svg" alt="">
+          <span class="text-[16px]/[19.2px] text-grey">No SEO features</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="bg-primary text-white pricing-card rounded-[2rem] mt-8 border border-[#E7E7E7] p-[1.5rem]">
+      <p class="font-bold text-[22px]/[26.4px]">Advanced</p>
+      <p>
+        For professionals and writers who need in-depth corrections and writing enhancement.
+      </p>
+      <p class="my-[1.5rem]">
+        <span class="price font-bolder text-[3.5rem]/[4.125rem]">
+          N20,000
+        </span>
+        <span class="duration">
+          / Month
+        </span>
+      </p>
+
+      <app-button [inputClass]="'!w-full !bg-white !text-primary !border !py-[0.5rem]'">
+        Get Started Now
+      </app-button>
+
+      <ul class="mt-[2.5rem] space-y-3">
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Everything in Basic Plan</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Advanced grammar and sentence structure correction</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">AI-powered tone and clarity suggestions</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Plagiarism checker (10 checks per month)</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Unlimited word count per check</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Customizable personal dictionary</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Available on Web, Browser Extension, and
+            Desktop App</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Readability Improvement Tips</span>
+        </li>
+      </ul>
+    </div>
+
+
+  </div>
+
+
+
+
+
+</section>
+
+<section class="py-8 md:py-[4rem]">
+
+  <p class="text-primary text-center font-bold text-3xl md:text-[2.5rem]/[3.25rem]">
+    Don’t just take our words
+  </p>
+
+  <div class="px-8 md:px-[8.5rem] grid grid-cols-1 md:grid-cols-2 gap-[2rem]">
+    <app-testimonial-box>
+      <img img src="assets/testimonial_1.png" alt="">
+      <p what>"This tool has completely changed the way I write! The AI Refinement feature polishes my content
+        effortlessly, making it clearer and more professional."</p>
+      <p who>Omotola Abass</p>
+      <p where>Grower.io</p>
+    </app-testimonial-box>
+
+    <app-testimonial-box>
+      <img img src="assets/testimonial_2.png" alt="">
+      <p what>" Whether I’m crafting emails, reports, or blog posts, it enhances my tone and structure perfectly. It
+        feels like having a personal editor by my side!""</p>
+      <p who>Stephen Oyeniyi</p>
+      <p where>Stevium Enterprises</p>
+    </app-testimonial-box>
+  </div>
+</section>
+
+<section class="px-8 md:p-[8.5rem]">
+  <div
+    class="newsletter bg-primary rounded-[18px]  bg-[#F8FAFC] py-[4.5rem] flex flex-col gap-y-[2.75rem] items-center justify-center">
+    <p class="text-center text-white text-2xl md:text-[2rem]/[43.2px] font-semibold">Subscribe to our newsletter</p>
+
+    <div class="flex flex-col md:flex-row items-center md:items-stretch gap-4">
+      <input type="text" placeholder="First name"
+        class="w-full px-4 py-1 border border-white rounded-sm focus:ring-2 focus:ring-primary focus:outline-none text-hero-white font-bold placeholder:text-hero-white" />
+      <input type="text" placeholder="Email address"
+        class="w-full px-4 py-1 border border-white rounded-sm focus:ring-2 focus:ring-primary focus:outline-none text-hero-white font-bold placeholder:text-hero-white" />
+
+      <app-button inputClass="!bg-[#0C3859] text-nowrap">Subscribe Now</app-button>
+    </div>
+  </div>
+
+
+</section>
+
+<app-footer-nav></app-footer-nav>
+<app-footer></app-footer>

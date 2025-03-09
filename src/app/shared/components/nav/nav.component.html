@@ -1,0 +1,20 @@
+<section class="p-4 md:px-8 md:py-4">
+  <div class="flex justify-between">
+    <div class="flex-item">
+      <img class="cursor-pointer" [routerLink]="['/']" routerLinkActive="router-link-active"
+        src="assets/svg/smart_scribbl_logo.svg" alt="an image of smart scribble logo">
+    </div>
+    <div class="flex-item flex gap-x-8">
+      <span class="cursor-pointer flex-item font-semibold text-[14.88px]">
+        Explore
+      </span>
+      <span class="cursor-pointer flex-item font-semibold text-[14.88px]">
+        Pricing
+      </span>
+      <span [routerLink]="['/auth/login']" routerLinkActive="router-link-active"
+        class="cursor-pointer flex-item font-semibold text-[14.88px]">
+        Login
+      </span>
+    </div>
+  </div>
+</section>

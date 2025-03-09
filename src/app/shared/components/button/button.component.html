@@ -1,0 +1,7 @@
+<button [ngClass]="inputClass"
+  class="px-[3rem] py-[1rem] bg-[#0D79C9] text-white rounded-[0.5rem] font-bold text-[0.875rem]/[21.61px] text-center flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+  <ng-content></ng-content>
+  @if (loading ) {
+  <span class="spinner"></span>
+  }
+</button>
