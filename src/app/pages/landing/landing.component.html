@@ -15,7 +15,8 @@
     </div>
 
     <div class="flex justify-center pt-[6rem]">
-      <app-button class="relative md:get_started_button">
+      <app-button [routerLink]="['/auth/signup']" routerLinkActive="router-link-active"
+        class="relative md:get_started_button">
         Get Started
       </app-button>
     </div>

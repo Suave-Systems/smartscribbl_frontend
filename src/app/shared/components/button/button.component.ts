@@ -10,4 +10,6 @@ import { Component, Input } from '@angular/core';
 })
 export class ButtonComponent {
   @Input('inputClass') inputClass = '';
+  @Input('buttonDisabled') buttonDisabled = false;
+  @Input() loading = false;
 }

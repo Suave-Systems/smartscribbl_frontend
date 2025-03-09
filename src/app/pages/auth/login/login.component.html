@@ -7,9 +7,15 @@
     <p class="text-center text-grey text-[1rem]/[1.5rem]">
       Continue your journey
     </p>
-    <app-input class="w-full" label="Email" placeholder="Enter your email"></app-input>
-    <app-input class="w-full" label="Password" placeholder="Enter your password"></app-input>
-    <app-button [routerLink]="['/auth/otp']" routerLinkActive="router-link-active" inputClass="!w-full"
+    @if (errorMessage) {
+    <p class="text-red-500 text-center text-[1rem]/[1.5rem]">
+      {{errorMessage}}
+    </p>
+    }
+    <app-input [control]="email" class="w-full" label="Email" placeholder="Enter your email"></app-input>
+    <app-input type="password" [control]="password" class="w-full" label="Password"
+      placeholder="Enter your password"></app-input>
+    <app-button [buttonDisabled]="isLoading" [loading]="isLoading" (click)="onLogin()" inputClass="!w-full"
       class="w-full">Login</app-button>
     <p class="text-center text-grey">
       Don't have an account?

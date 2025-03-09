@@ -5,12 +5,21 @@
     </p>
 
     <p class="text-center text-[1rem]/[1.5rem]">
-      We have sent a 6-digit code to your email, <span class="font-semibold">{{'seunadesina@gmail.com.'}}</span> Kindly
+      We have sent a 6-digit code to your email,
+      <!-- <span class="font-semibold">{{'seunadesina@gmail.com.'}}</span> -->
+      Kindly
       enter it into the input box below.
     </p>
+    @if (errormessage) {
+
+    <p class="text-center text-red-500 text-[1rem]/[1.5rem]">
+    <p class="">
+      {{errormessage}}
+    </p>
+    }
 
     <ng-otp-input [formControl]="otp" [config]="{ length: 6 }"></ng-otp-input>
-    <app-button inputClass="!w-full" class="w-full">Verify</app-button>
+    <app-button (click)="onVerify()" inputClass="!w-full" class="w-full">Verify</app-button>
     <p class="text-center text-grey">
       Didn’t get the code?
       <span [routerLink]="['/auth/signup']" routerLinkActive="router-link-active" class="cursor-pointer text-primary">

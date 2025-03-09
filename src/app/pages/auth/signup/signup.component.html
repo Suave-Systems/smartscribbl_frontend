@@ -7,11 +7,17 @@
     <p class="text-center text-grey text-[1rem]/[1.5rem]">
       Start your journey
     </p>
-    <app-input class="w-full" label="First Name" placeholder="Enter your First Name"></app-input>
-    <app-input class="w-full" label="Last Name" placeholder="Enter your Last Name"></app-input>
-    <app-input class="w-full" label="Email" placeholder="Enter your email"></app-input>
-    <app-input class="w-full" label="Password" placeholder="Enter your password"></app-input>
-    <app-button inputClass="!w-full" class="w-full">Get Started</app-button>
+    @if (errorMessage) {
+    <p class="text-center text-red-500 text-grey text-[1rem]/[1.5rem]">
+      {{errorMessage}}
+    </p>
+    }
+    <app-input [control]="firstName" class="w-full" label="First Name" placeholder="Enter your First Name"></app-input>
+    <app-input [control]="lastName" class="w-full" label="Last Name" placeholder="Enter your Last Name"></app-input>
+    <app-input type="email" [control]="email" class="w-full" label="Email" placeholder="Enter your email"></app-input>
+    <app-input type="password" [control]="password" class="w-full" label="Password"
+      placeholder="Enter your password"></app-input>
+    <app-button (click)="signUp()" inputClass="!w-full" class="w-full">Get Started</app-button>
     <p class="text-center text-grey">
       Already have an account?
       <span [routerLink]="['/auth/login']" routerLinkActive="router-link-active" class="cursor-pointer text-primary">
