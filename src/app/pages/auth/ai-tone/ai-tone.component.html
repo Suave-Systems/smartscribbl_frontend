@@ -1,0 +1,72 @@
+<mat-dialog-content class="w-full">
+  <div class=" flex justify-end">
+    <button [mat-dialog-close]="true">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13 1L1 13M1 1L13 13" stroke="#717680" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="w-full flex justify-center">
+    <img src="assets/svg/scribbl-bot.svg" alt="">
+  </div>
+
+  <p class="text-center text-black font-semibold text-[18px]/[28px] mb-3">
+    Customize AI Assistant
+  </p>
+  <p class="text-center text-grey text-[12px]/[20px] mb-3">
+    Share a bit about how you want your AI Assistant to be, for more tailored and accurate suggestions.
+  </p>
+
+  <form [formGroup]="form">
+    <app-input [control]="aiCustomName" label="Name your AI" placeholder="SmartScribbl"></app-input>
+
+    <div class="mt-3">
+      <label class="mb-3 text-[14px]/[20px] font-medium">
+        Describe what traits you want your AI to possess?
+      </label>
+
+      <textarea formControlName="ai_trait_description"
+        class="resize w-full px-4 py-2 border border-[#D5D7DA] rounded-[0.5rem] focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none placeholder:text-[#717680]"></textarea>
+    </div>
+
+    <div class="mt-3 flex gap-2 justify-center flex-wrap md:flex-nowrap ">
+      @for (option of options(); track option.id) {
+      <div>
+        <input (input)="toggleSelection(option.tone)" type="checkbox" [checked]="aiTone.value === option.tone"
+          [id]="option.tone" class="hidden peer">
+        <label [for]="option.tone"
+          class="flex gap-x-2 justify-center items-center font-medium text-sm px-4 py-1 text-grey border rounded-full cursor-pointer peer-checked:bg-primary peer-checked:text-white transition">
+          <svg width="15" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_644_2358)">
+              <path
+                d="M13.7158 7H8.71582V2C8.71582 1.86739 8.66314 1.74021 8.56937 1.64645C8.47561 1.55268 8.34843 1.5 8.21582 1.5V1.5C8.08321 1.5 7.95604 1.55268 7.86227 1.64645C7.7685 1.74021 7.71582 1.86739 7.71582 2V7H2.71582C2.58321 7 2.45604 7.05268 2.36227 7.14645C2.2685 7.24021 2.21582 7.36739 2.21582 7.5V7.5C2.21582 7.63261 2.2685 7.75979 2.36227 7.85355C2.45604 7.94732 2.58321 8 2.71582 8H7.71582V13C7.71582 13.1326 7.7685 13.2598 7.86227 13.3536C7.95604 13.4473 8.08321 13.5 8.21582 13.5C8.34843 13.5 8.47561 13.4473 8.56937 13.3536C8.66314 13.2598 8.71582 13.1326 8.71582 13V8H13.7158C13.8484 8 13.9756 7.94732 14.0694 7.85355C14.1631 7.75979 14.2158 7.63261 14.2158 7.5C14.2158 7.36739 14.1631 7.24021 14.0694 7.14645C13.9756 7.05268 13.8484 7 13.7158 7Z"
+                fill="currentColor" />
+            </g>
+            <defs>
+              <clipPath id="clip0_644_2358">
+                <rect width="12" height="12" fill="white" transform="translate(2.21582 1.5)" />
+              </clipPath>
+            </defs>
+          </svg>
+          <span class="text-nowrap">
+            {{ option.tone }}
+          </span>
+        </label>
+      </div>
+      }
+    </div>
+
+    <div class="flex justify-center gap-4 mt-5">
+      <app-button [mat-dialog-close]="true"
+        inputClass="!border-1 !border-primary !py-[0.5rem] !px-[4rem] !bg-white !text-primary">Cancel</app-button>
+      <app-button (click)="createUserMetadata()" inputClass="!py-[0.5rem] !px-[4rem]">Submit</app-button>
+    </div>
+  </form>
+
+  <p class="mt-3 text-center text-grey text-sm underline" [mat-dialog-close]="true" [routerLink]="['/main/dashboard']"
+    routerLinkActive="router-link-active">Skip</p>
+
+
+</mat-dialog-content>

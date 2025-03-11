@@ -9,6 +9,7 @@ import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { SelectComponent } from '../../../shared/components/select/select.component';
@@ -31,11 +32,12 @@ export class CompleteRegTwoComponent {
   primaryRoles: any = [];
 
   form!: FormGroup;
+  customer_meta: any;
 
   ngOnInit() {
     this.form = this.fb.group({
-      primary_job_field: [''],
-      job_role: [''],
+      primary_job_field: [null, [Validators.required]],
+      job_role: [null, [Validators.required]],
     });
     this.getJobRoles();
     this.getPrimaryRoles();
@@ -59,7 +61,7 @@ export class CompleteRegTwoComponent {
     const sub = this.authService.getPrimaryJobRole().subscribe({
       next: (res: any[]) => {
         this.primaryRoles = res.map((element) => {
-          return { label: element.field, ...element };
+          return { label: element.field, value: element.id, ...element };
         });
       },
     });
@@ -71,7 +73,7 @@ export class CompleteRegTwoComponent {
     const sub = this.authService.getJobRole().subscribe({
       next: (res: any[]) => {
         this.roles = res.map((element) => {
-          return { label: element.role, ...element };
+          return { label: element.role, value: element.id, ...element };
         });
       },
     });
@@ -83,13 +85,19 @@ export class CompleteRegTwoComponent {
     const sub = this.authService
       .getUserMetaDataById(this.authService.getUserId())
       .subscribe({
-        next: (res: any) => this.form.patchValue(res),
+        next: (res: any) => {
+          this.customer_meta = res;
+          this.form.patchValue(res);
+        },
+        error: () => {},
       });
     this.subscriptions.push(sub);
   }
 
   onSave() {
-    const sub = this.authService.updateUserMetaDataById('').subscribe({
+    const data = { ...this.customer_meta, ...this.form.value };
+
+    const sub = this.authService.postUserMeta(data).subscribe({
       next: () => {
         this.notification.success(
           `Thanks! We’ve noted your expertise.`,

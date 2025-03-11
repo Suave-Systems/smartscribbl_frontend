@@ -51,25 +51,7 @@ export class AuthService {
   verifyLogin(payload: verifyEmailRequest) {
     this.http.post(`${this.baseUrl}auth/v1/login/verify/`, payload).subscribe({
       next: (res: any) => {
-        if (res.code === 200) {
-          if (res.token && res.token.access) {
-            // Store JWT token in local storage or session storage
-            this.cookieService.set(
-              this.cookieService.COOKIE_NAME,
-              res.token.access
-            );
-            this.cookieService.set('refreshToken', res.token.refresh);
-            const decodedToken: any = jwtDecode(res.token.access);
-            this.cookieService.set('userId', decodedToken.user_id);
-            this.toastr.success('Login successful', 'SUCCESS');
-            this.verifyEmailSubject.next(res);
-            this.router.navigate(['/main/dashboard']);
-          }
-        } else {
-          this.verifyEmailSubject.error(res);
-          const message: string = res.message || 'An Unknown error Occurred';
-          this.toastr.error(message, 'Error');
-        }
+        this.handleToken(res);
       },
       error: (err) => {
         this.verifyEmailSubject.error(err);
@@ -78,6 +60,29 @@ export class AuthService {
     });
 
     return this.verifyEmailSubject.asObservable();
+  }
+
+  handleToken(res: any) {
+    if (res.code === 200) {
+      if (res.token && res.token.access) {
+        // Store JWT token in local storage or session storage
+        this.cookieService.set(
+          this.cookieService.COOKIE_NAME,
+          res.token.access
+        );
+        this.cookieService.set('refreshToken', res.token.refresh);
+        const decodedToken: any = jwtDecode(res.token.access);
+        this.cookieService.set('userId', decodedToken.user_id);
+        this.toastr.success('Login successful', 'SUCCESS');
+        this.verifyEmailSubject.next(res);
+        this.verifyEmailSubject.complete();
+        // this.router.navigate(['/main/dashboard']);
+      }
+    } else {
+      this.verifyEmailSubject.error(res);
+      const message: string = res.message || 'An Unknown error Occurred';
+      this.toastr.error(message, 'Error');
+    }
   }
 
   logout(): void {
@@ -130,16 +135,7 @@ export class AuthService {
   verifyEmail(payload: verifyEmailRequest) {
     this.http.post(`${this.baseUrl}auth/v1/verify-otp/`, payload).subscribe({
       next: (res: any) => {
-        if (res.code === 200) {
-          this.toastr.success(res.message, 'Error');
-          this.router.navigate(['/auth/complete-reg-one']);
-          this.verifyEmailSubject.next(res);
-          this.verifyEmailSubject.complete();
-        } else {
-          this.verifyEmailSubject.error(res);
-          const message: string = res.message || 'An Unknown error Occurred';
-          this.toastr.error(message, 'Error');
-        }
+        this.handleToken(res);
       },
       error: (err) => {
         this.verifyEmailSubject.error(err);
@@ -174,6 +170,12 @@ export class AuthService {
     );
   }
 
+  getAiTone() {
+    return this.http.get(
+      `${this.baseUrl}onboarding/v1/ai-tone/?only_active=true`
+    );
+  }
+
   postUserMeta(payload: any): Observable<any> {
     const responseSubject = new Subject<any>(); // Create a fresh subject per request
 
@@ -181,19 +183,10 @@ export class AuthService {
       .post(`${this.baseUrl}users/v1/customer-metadata/`, payload)
       .subscribe({
         next: (res: any) => {
-          if (res.code === 200) {
-            this.toastr.success(
-              'Got it! Your writing focus is set.',
-              'Success'
-            );
-            this.router.navigate(['/auth/complete-reg-two']);
-            responseSubject.next(res);
-            responseSubject.complete(); // COMPLETE the observable
-          } else {
-            const message: string = res.message || 'An Unknown error occurred';
-            this.toastr.error(message, 'Error');
-            responseSubject.error(res);
-          }
+          this.toastr.success('Got it! Your writing focus is set.', 'Success');
+          // this.router.navigate([`/auth/complete-reg-${nextStep}`]);
+          responseSubject.next(res);
+          responseSubject.complete(); // COMPLETE the observable
         },
         error: (err) => {
           this.toastr.error(
@@ -208,7 +201,7 @@ export class AuthService {
   }
 
   getUserMetaDataById(userId: any) {
-    return this.http.get(`${this.baseUrl}users/v1/customer-metadata/${userId}`);
+    return this.http.get(`${this.baseUrl}users/v1/customer-metadata/me/`);
   }
 
   updateUserMetaDataById(payload: any) {

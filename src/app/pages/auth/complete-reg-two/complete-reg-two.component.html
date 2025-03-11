@@ -12,14 +12,16 @@
       Share some details about your area of expertise
     </p>
     <p class="text-grey text-[14px]">Make your choice below</p>
-    <app-select [options]="primaryRoles" [control]="primary_job_field" class="w-full" label="My Primary Field is"
-      placeholder="Choose your Field"></app-select>
-    <app-select [options]="roles" [control]="job_role" class="w-full" label="My Role"
+    <app-select defaultValue="null" [options]="primaryRoles" [control]="primary_job_field" class="w-full"
+      label="My Primary Field is" placeholder="Choose your Field"></app-select>
+    <app-select defaultValue="null" [options]="roles" [control]="job_role" class="w-full" label="My Role"
       placeholder="Choose your role"></app-select>
 
+    <p class="text-center text-grey text-sm underline" [routerLink]="['/main/dashboard']"
+      routerLinkActive="router-link-active">Skip</p>
 
-    <app-button [routerLink]="['/auth/otp']" routerLinkActive="router-link-active" inputClass="!w-full"
-      class="w-full">Continue</app-button>
+
+    <app-button (click)="onSave()" inputClass="!w-full" class="w-full">Continue</app-button>
 
   </form>
 </div>

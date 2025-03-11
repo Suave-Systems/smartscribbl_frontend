@@ -13,6 +13,7 @@ export class SelectComponent {
   @Input('control') control!: FormControl;
   @Input('inputClass') inputClass = '';
   @Input('label') label!: string;
+  @Input('defaultValue') defaultValue: any = '';
   @Input('placeholder') placeholder: string = '';
   @Input('options') options: any[] = [];
 }
