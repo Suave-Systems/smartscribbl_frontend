@@ -35,7 +35,7 @@ export class AuthService {
         next: (res) => {
           this.toastr.success(res.message, 'SUCCESS');
           this.router.navigate(['/auth/otp'], {
-            queryParams: { mode: 'login' },
+            queryParams: { mode: 'login', otp: res.otp },
           });
           responseSubject.complete();
         },
@@ -114,7 +114,7 @@ export class AuthService {
         next: (res) => {
           if (res.code === 201) {
             this.router.navigate(['/auth/otp'], {
-              queryParams: { mode: 'signup' },
+              queryParams: { mode: 'signup', otp: res.otp },
             });
             this.signupSubject.complete();
           } else {

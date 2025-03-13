@@ -17,7 +17,8 @@
     </p>
     }
 
-    <ng-otp-input [formControl]="otp" [config]="{ length: 6 }"></ng-otp-input>
+    <ng-otp-input [formControl]="otp"
+      [config]="{ length: 6, allowNumbersOnly:true, isPasswordInput: true }"></ng-otp-input>
     <app-button [buttonDisabled]="isLoading()" [loading]="isLoading()" (buttonClick)="onVerify()" inputClass="!w-full"
       class="w-full">Verify</app-button>
     <p class="text-center text-grey">

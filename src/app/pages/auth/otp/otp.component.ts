@@ -55,6 +55,12 @@ export class OtpComponent implements OnInit, OnDestroy {
         this.mode = mode;
         this.isLoading.set(false);
       }
+
+      if (params.has('otp')) {
+        const otp = params.get('otp') as string;
+        this.otp.patchValue(otp);
+        this.otp.updateValueAndValidity();
+      }
     });
   }
 
