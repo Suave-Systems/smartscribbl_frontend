@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-button',
@@ -12,4 +12,12 @@ export class ButtonComponent {
   @Input('inputClass') inputClass = '';
   @Input('buttonDisabled') buttonDisabled = false;
   @Input() loading = false;
+  @Output() buttonClick = new EventEmitter<any>();
+
+  onButtonClick() {
+    if (this.loading || this.buttonDisabled) {
+      return;
+    }
+    this.buttonClick.emit();
+  }
 }

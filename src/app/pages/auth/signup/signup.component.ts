@@ -1,9 +1,16 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { InputComponent } from '../../../shared/components/input/input.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { RouterLink } from '@angular/router';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { AuthService } from '../../../shared/services/auth.service';
+import { HelperService } from '../../../shared/services/helper.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-signup',
@@ -12,19 +19,29 @@ import { AuthService } from '../../../shared/services/auth.service';
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss',
 })
-export class SignupComponent {
+export class SignupComponent implements OnInit, OnDestroy {
   signUpForm!: FormGroup;
+  errorMessage = '';
+  isLoading = signal(false);
+
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
-  errorMessage = '';
+  private helperService = inject(HelperService);
+
+  private subscriptions: Subscription[] = [];
 
   ngOnInit() {
     this.signUpForm = this.fb.group({
-      first_name: [''],
-      last_name: [''],
-      email: [''],
-      password: [''],
+      first_name: ['', [Validators.required]],
+      last_name: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]],
     });
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.length > 0 &&
+      this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   get firstName() {
@@ -41,15 +58,20 @@ export class SignupComponent {
   }
 
   signUp() {
+    this.isLoading.set(true);
     this.errorMessage = '';
     // Call API to sign up
     if (this.signUpForm.invalid) {
+      this.isLoading.set(false);
+      this.helperService.validateAllFormFields(this.signUpForm);
       return;
     }
-    this.authService.signUp(this.signUpForm.value).subscribe({
+    const sub = this.authService.signUp(this.signUpForm.value).subscribe({
       error: (err) => {
+        this.isLoading.set(false);
         this.errorMessage = err.error.detail;
       },
     });
+    this.subscriptions.push(sub);
   }
 }

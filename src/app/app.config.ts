@@ -21,6 +21,6 @@ export const appConfig: ApplicationConfig = {
       extendedTimeOut: 2000, // Extend timeOut after user hovers over the toast
       easeTime: 300, // Duration of animation easing
       toastClass: 'ngx-toastr toast-class', // Custom class for additional styling
-    }),
+    }), provideAnimationsAsync(),
   ],
 };

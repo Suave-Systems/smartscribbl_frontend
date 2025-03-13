@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { InputComponent } from '../../../shared/components/input/input.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { RouterLink } from '@angular/router';
@@ -9,6 +9,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from '../../../shared/services/auth.service';
+import { HelperService } from '../../../shared/services/helper.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -17,18 +19,26 @@ import { AuthService } from '../../../shared/services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit, OnDestroy {
   loginForm!: FormGroup;
+  errorMessage = '';
+  isLoading = signal(false);
+
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
-  errorMessage = '';
-  isLoading = false;
+  private helperService = inject(HelperService);
 
+  private subscriptions: Subscription[] = [];
   ngOnInit() {
     this.loginForm = this.fb.group({
       email: ['customer@example.com', [Validators.required]],
       password: ['Customer@2025', [Validators.required]],
     });
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.length > 0 &&
+      this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   get email() {
@@ -40,16 +50,20 @@ export class LoginComponent {
   }
 
   onLogin() {
+    this.errorMessage = '';
+    this.isLoading.set(true);
     if (this.loginForm.invalid) {
+      this.helperService.validateAllFormFields(this.loginForm);
+      this.isLoading.set(false);
       return;
     }
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.authService.login(this.loginForm.value).subscribe({
+    const sub = this.authService.login(this.loginForm.value).subscribe({
       error: (err) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorMessage = err.error.detail;
       },
     });
+
+    this.subscriptions.push(sub);
   }
 }

@@ -29,8 +29,8 @@
     <div class="flex gap-2 justify-center flex-wrap md:flex-nowrap ">
       @for (option of options(); track option.id) {
       <div>
-        <input (input)="toggleSelection(option.id)" type="checkbox" [checked]="selectedOptions().has(option.id)"
-          [id]="option.intention" class="hidden peer">
+        <input (input)="toggleSelection(option.intention)" type="checkbox"
+          [checked]="selectedOptions().includes(option.intention)" [id]="option.intention" class="hidden peer">
         <label [for]="option.intention"
           class="flex gap-x-2 justify-center items-center font-medium text-sm px-12 py-4 text-grey border rounded-full cursor-pointer peer-checked:bg-primary peer-checked:text-white transition">
           <svg width="15" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -53,7 +53,10 @@
       }
     </div>
 
-    <app-button (click)="onSave()" [buttonDisabled]="isSaving()" [loading]="isSaving()" inputClass="!w-full"
+    <p class="cursor-pointer text-center text-grey text-sm underline" [routerLink]="['/main/dashboard']"
+      routerLinkActive="router-link-active">Skip</p>
+
+    <app-button [buttonDisabled]="isLoading()" [loading]="isLoading()" (click)="onSave()" inputClass="!w-full"
       class="w-full">Continue</app-button>
   </div>
 </div>

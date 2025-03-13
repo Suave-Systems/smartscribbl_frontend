@@ -8,7 +8,13 @@
   --color-gray: #52525b;
   --color-hero-white: #fafafa;
 }
+html,
 body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
   font-family: "Albert Sans", serif;
   @apply text-black;
 }
