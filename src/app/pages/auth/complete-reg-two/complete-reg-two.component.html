@@ -17,11 +17,12 @@
     <app-select defaultValue="null" [options]="roles" [control]="job_role" class="w-full" label="My Role"
       placeholder="Choose your role"></app-select>
 
-    <p class="text-center text-grey text-sm underline" [routerLink]="['/main/dashboard']"
+    <p class="cursor-pointer text-center text-grey text-sm underline" [routerLink]="['/main/dashboard']"
       routerLinkActive="router-link-active">Skip</p>
 
 
-    <app-button (click)="onSave()" inputClass="!w-full" class="w-full">Continue</app-button>
+    <app-button [buttonDisabled]="isLoading()" [loading]="isLoading()" (buttonClick)="onSave()" inputClass="!w-full"
+      class="w-full">Continue</app-button>
 
   </form>
 </div>

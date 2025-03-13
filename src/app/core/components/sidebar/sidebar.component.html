@@ -1,13 +1,14 @@
-<section class="w-full h-full bg-white flex flex-col px-[12px] gap-y-[16px]">
+<section class="w-full h-full bg-white flex flex-col gap-y-[16px] ">
   <div class="flex justify-center items-center">
-    <img src="../../../../assets/svg/smart_scribbl_logo.svg" alt="">
-
+    <p [routerLink]="['/main/dashboard']" class="cursor-pointer">
+      <img src="../../../../assets/svg/smart_scribbl_logo.svg" alt="">
+    </p>
   </div>
 
   <ul class="flex flex-col gap-y-[12px] cursor-pointer">
     @for (route of routes; track route._id) {
-    <li [routerLink]="[route.link]" routerLinkActive="active"
-      class="flex p-4 items-center hover:rounded-full hover:bg-secondary hover:text-primary">
+    <!-- [routerLink]="[route.link]" routerLinkActive="active" -->
+    <li (click)="caughtUs()" class="flex p-4 items-center hover:rounded-full hover:bg-secondary hover:text-primary">
       <span [innerHTML]="route.icon">
       </span>
 

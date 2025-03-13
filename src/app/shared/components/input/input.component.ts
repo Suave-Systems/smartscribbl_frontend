@@ -14,5 +14,8 @@ export class InputComponent {
   @Input('inputClass') inputClass = '';
   @Input('label') label!: string;
   @Input('type') type: 'text' | 'password' | 'email' = 'text';
+  @Input('errorMessage') errorMessage: string =
+    'Invalid input. Please check your entries and try again.';
+  @Input('useDefaultError') useDefaultError = true;
   @Input('placeholder') placeholder: string = '';
 }

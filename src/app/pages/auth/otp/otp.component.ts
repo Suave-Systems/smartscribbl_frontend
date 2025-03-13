@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { NgOtpInputComponent } from 'ng-otp-input';
@@ -20,14 +20,16 @@ import { DialogService } from '../../../shared/services/dialog.service';
   templateUrl: './otp.component.html',
   styleUrl: './otp.component.scss',
 })
-export class OtpComponent implements OnInit {
+export class OtpComponent implements OnInit, OnDestroy {
   otp = new FormControl('', [Validators.required]);
+  errormessage = '';
+  mode: 'login' | 'signup' = 'login';
+  isLoading = signal(false);
+
+  private dialogService = inject(DialogService);
   private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private dialogService = inject(DialogService);
-  errormessage = '';
-  mode: 'login' | 'signup' = 'login';
 
   private subscriptions: Subscription[] = [];
 
@@ -40,11 +42,18 @@ export class OtpComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    this.subscriptions.length > 0 &&
+      this.subscriptions.forEach((sub) => sub.unsubscribe);
+  }
+
   getMode() {
+    this.isLoading.set(true);
     this.route.queryParamMap.subscribe((params: ParamMap) => {
       if (params.has('mode')) {
         const mode = params.get('mode') as any;
         this.mode = mode;
+        this.isLoading.set(false);
       }
     });
   }
@@ -79,38 +88,34 @@ export class OtpComponent implements OnInit {
   }
 
   onVerify() {
+    this.isLoading.set(true);
     if (this.otp.invalid) {
       // this.helperService.validateAllFormFields(this.otp);
-      this.errormessage = '';
+      this.errormessage = 'OTP is invalid';
+      this.isLoading.set(false);
       return;
     }
 
-    const sub =
+    const req =
       this.mode === 'login' ? this.onLoginVerify() : this.onSignupVerify();
-    sub.subscribe({
+    const sub = req.subscribe({
       next: () => {
         this.getUserMetaData();
+        this.isLoading.set(false);
       },
       error: (err) => {
         this.errormessage = err.error.details;
+        this.isLoading.set(false);
       },
     });
+
+    this.subscriptions.push(sub);
   }
 
   onSignupVerify() {
     return this.authService.verifyEmail({ otp_code: this.otp.value as string });
-    // .subscribe({
-    //   error: (err) => {
-    //     this.errormessage = err.error.details;
-    //   },
-    // });
   }
   onLoginVerify() {
     return this.authService.verifyLogin({ otp_code: this.otp.value as string });
-    // .subscribe({
-    //   error: (err) => {
-    //     this.errormessage = err.error.details;
-    //   },
-    // });
   }
 }

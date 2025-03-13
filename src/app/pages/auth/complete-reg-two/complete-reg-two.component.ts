@@ -1,7 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { Router, RouterLink } from '@angular/router';
-import { InputComponent } from '../../../shared/components/input/input.component';
 import { AuthService } from '../../../shared/services/auth.service';
 import { NotificationService } from '../../../shared/services/notification.service';
 import {
@@ -13,6 +12,7 @@ import {
 } from '@angular/forms';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { SelectComponent } from '../../../shared/components/select/select.component';
+import { HelperService } from '../../../shared/services/helper.service';
 
 @Component({
   selector: 'app-complete-reg-two',
@@ -22,17 +22,20 @@ import { SelectComponent } from '../../../shared/components/select/select.compon
   styleUrl: './complete-reg-two.component.scss',
 })
 export class CompleteRegTwoComponent {
+  errorMessage = '';
+  roles: any = [];
+  primaryRoles: any = [];
+  form!: FormGroup;
+  customer_meta: any;
+  isLoading = signal(false);
+
+  private helperService = inject(HelperService);
   private authService = inject(AuthService);
   private notification = inject(NotificationService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
-  errorMessage = '';
-  private subscriptions: Subscription[] = [];
-  roles: any = [];
-  primaryRoles: any = [];
 
-  form!: FormGroup;
-  customer_meta: any;
+  private subscriptions: Subscription[] = [];
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -95,6 +98,13 @@ export class CompleteRegTwoComponent {
   }
 
   onSave() {
+    this.errorMessage = '';
+    // if (this.form.invalid) {
+    //   this.helperService.validateAllFormFields(this.form);
+    //   this.errorMessage = 'one or more input fields are invalid';
+    //   return;
+    // }
+    this.isLoading.set(true);
     const data = { ...this.customer_meta, ...this.form.value };
 
     const sub = this.authService.postUserMeta(data).subscribe({
@@ -104,6 +114,10 @@ export class CompleteRegTwoComponent {
           'SUCCESS'
         );
         this.router.navigate(['/auth/complete-reg-three']);
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.isLoading.set(false);
       },
     });
 

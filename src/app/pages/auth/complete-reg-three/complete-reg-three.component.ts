@@ -17,17 +17,23 @@ export class CompleteRegThreeComponent {
   options = signal<{ id: number; suggestion: string }[]>([]);
   selectedOptions = signal<number[]>([]);
   errorMessage = signal<string>('');
-  isSaving = signal<boolean>(false);
+  isLoading = signal<boolean>(false);
+  customer_meta: any;
 
   private authService = inject(AuthService);
   private dialogService = inject(DialogService);
   private router = inject(Router);
-  customer_meta: any;
+
   private subscriptions: Subscription[] = [];
 
   ngOnInit() {
     this.getOptions();
     this.getUserMetaData();
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.length > 0 &&
+      this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   getOptions() {
@@ -66,18 +72,24 @@ export class CompleteRegThreeComponent {
   }
 
   onSave() {
+    this.errorMessage.set('');
+    if (this.selectedOptions.length === 0) {
+      this.errorMessage.set('Kindly select from the choices below');
+      return;
+    }
+    this.isLoading.set(true);
     this.customer_meta = {
       ...this.customer_meta,
       suggested_help: [...this.selectedOptions()],
     };
     const sub = this.authService.postUserMeta(this.customer_meta).subscribe({
       next: () => {
-        this.isSaving.set(false);
+        this.isLoading.set(false);
         this.router.navigate(['/main/dashboard']);
         this.dialogService.openDialog(AiToneComponent, { width: '640px' });
       },
       error: (err) => {
-        this.isSaving.set(false);
+        this.isLoading.set(false);
         this.errorMessage.set(err.error.detail || 'An unknown error occurred');
       },
     });

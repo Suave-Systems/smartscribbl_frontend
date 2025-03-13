@@ -12,14 +12,14 @@
     </p>
     @if (errormessage) {
 
-    <p class="text-center text-red-500 text-[1rem]/[1.5rem]">
-    <p class="">
+    <p class="text-center text-red-500 text-sm">
       {{errormessage}}
     </p>
     }
 
     <ng-otp-input [formControl]="otp" [config]="{ length: 6 }"></ng-otp-input>
-    <app-button (click)="onVerify()" inputClass="!w-full" class="w-full">Verify</app-button>
+    <app-button [buttonDisabled]="isLoading()" [loading]="isLoading()" (buttonClick)="onVerify()" inputClass="!w-full"
+      class="w-full">Verify</app-button>
     <p class="text-center text-grey">
       Didn’t get the code?
       <span [routerLink]="['/auth/signup']" routerLinkActive="router-link-active" class="cursor-pointer text-primary">
