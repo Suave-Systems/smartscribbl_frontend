@@ -113,7 +113,7 @@ export class AiToneComponent {
       },
       error: (err) => {
         this.isSaving.set(false);
-        this.errorMessage.set(err.error.detail || 'An unknown error occurred');
+        this.errorMessage.set(err.error.message || 'An unknown error occurred');
       },
     });
     this.subscriptions.push(sub);

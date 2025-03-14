@@ -41,7 +41,7 @@ export class AuthService {
         },
         error: (err) => {
           responseSubject.error(err);
-          this.toastr.error(err.error.detail, 'Error');
+          this.toastr.error(err.error.message, 'Error');
         },
       });
 
@@ -55,7 +55,7 @@ export class AuthService {
       },
       error: (err) => {
         this.verifyEmailSubject.error(err);
-        this.toastr.error(err.error.detail, 'Error');
+        this.toastr.error(err.error.message, 'Error');
       },
     });
 
@@ -73,7 +73,6 @@ export class AuthService {
         this.cookieService.set('refreshToken', res.token.refresh);
         const decodedToken: any = jwtDecode(res.token.access);
         this.cookieService.set('userId', decodedToken.user_id);
-        this.toastr.success('Login successful', 'SUCCESS');
         this.verifyEmailSubject.next(res);
         this.verifyEmailSubject.complete();
         // this.router.navigate(['/main/dashboard']);
@@ -116,6 +115,7 @@ export class AuthService {
             this.router.navigate(['/auth/otp'], {
               queryParams: { mode: 'signup', otp: res.otp },
             });
+            this.toastr.success(res.message, 'Success');
             this.signupSubject.complete();
           } else {
             this.signupSubject.error(res);
@@ -125,7 +125,7 @@ export class AuthService {
         },
         error: (err) => {
           this.signupSubject.error(err);
-          this.toastr.error(err.error.detail, 'Error');
+          this.toastr.error(err.error.message, 'Error');
         },
       });
 
@@ -139,7 +139,7 @@ export class AuthService {
       },
       error: (err) => {
         this.verifyEmailSubject.error(err);
-        this.toastr.error(err.error.detail, 'Error');
+        this.toastr.error(err.error.message, 'Error');
       },
     });
 
@@ -190,7 +190,7 @@ export class AuthService {
         },
         error: (err) => {
           this.toastr.error(
-            err.error.detail || 'An unknown error occurred',
+            err.error.message || 'An unknown error occurred',
             'Error'
           );
           responseSubject.error(err);
@@ -222,7 +222,7 @@ export class AuthService {
         },
         error: (err) => {
           responseSubject.error(err);
-          this.toastr.error(err.error.detail, 'Error');
+          this.toastr.error(err.error.message, 'Error');
         },
       });
 

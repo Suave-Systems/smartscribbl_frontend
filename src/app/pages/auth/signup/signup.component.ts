@@ -69,7 +69,7 @@ export class SignupComponent implements OnInit, OnDestroy {
     const sub = this.authService.signUp(this.signUpForm.value).subscribe({
       error: (err) => {
         this.isLoading.set(false);
-        this.errorMessage = err.error.detail;
+        this.errorMessage = err.error.message;
       },
     });
     this.subscriptions.push(sub);

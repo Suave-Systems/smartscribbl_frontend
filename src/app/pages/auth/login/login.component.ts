@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     const sub = this.authService.login(this.loginForm.value).subscribe({
       error: (err) => {
         this.isLoading.set(false);
-        this.errorMessage = err.error.detail;
+        this.errorMessage = err.error.message;
       },
     });
 
