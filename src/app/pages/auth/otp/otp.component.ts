@@ -105,12 +105,12 @@ export class OtpComponent implements OnInit, OnDestroy {
     const req =
       this.mode === 'login' ? this.onLoginVerify() : this.onSignupVerify();
     const sub = req.subscribe({
-      next: () => {
+      next: (res) => {
         this.getUserMetaData();
         this.isLoading.set(false);
       },
       error: (err) => {
-        this.errormessage = err.error.details;
+        this.errormessage = err.error.message;
         this.isLoading.set(false);
       },
     });
