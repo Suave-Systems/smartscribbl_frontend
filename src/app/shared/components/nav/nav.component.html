@@ -1,20 +1,48 @@
 <section class="p-4 md:px-8 md:py-4">
-  <div class="flex justify-between">
-    <div class="flex-item">
-      <img class="cursor-pointer" [routerLink]="['/']" routerLinkActive="router-link-active"
-        src="assets/svg/smart_scribbl_logo.svg" alt="an image of smart scribble logo">
+  <div class="flex items-center justify-between">
+    <!-- Logo -->
+    <div>
+      <img class="cursor-pointer w-24 md:w-auto" [routerLink]="['/']" routerLinkActive="router-link-active"
+        src="assets/svg/smart_scribbl_logo.svg" alt="Smart Scribble Logo">
     </div>
-    <div class="flex-item flex gap-x-8">
-      <span class="cursor-pointer flex-item font-semibold text-[14.88px]">
+
+    <!-- Navigation for larger screens -->
+    <div class="hidden md:flex gap-x-4 md:gap-x-8">
+      <span class="cursor-pointer font-semibold text-[14px] md:text-[14.88px]">
         Explore
       </span>
-      <span class="cursor-pointer flex-item font-semibold text-[14.88px]">
+      <span class="cursor-pointer font-semibold text-[14px] md:text-[14.88px]">
         Pricing
       </span>
       <span [routerLink]="['/auth/login']" routerLinkActive="router-link-active"
-        class="cursor-pointer flex-item font-semibold text-[14.88px]">
+        class="cursor-pointer font-semibold text-[14px] md:text-[14.88px]">
         Login
       </span>
+    </div>
+
+    <!-- Mobile Menu Placeholder -->
+    <div class="md:hidden">
+      <button mat-button [matMenuTriggerFor]="menu" class="text-gray-700 focus:outline-none">
+        <!-- Replace with a menu icon (e.g., Heroicons or FontAwesome) -->
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+          </path>
+        </svg>
+      </button>
+      <mat-menu #menu="matMenu">
+        <div class="flex flex-col gap-y-4">
+          <span mat-menu-item class="cursor-pointer font-semibold text-[14px] md:text-[14.88px]">
+            Explore
+          </span>
+          <span mat-menu-item class="cursor-pointer font-semibold text-[14px] md:text-[14.88px]">
+            Pricing
+          </span>
+          <span mat-menu-item [routerLink]="['/auth/login']" routerLinkActive="router-link-active"
+            class="cursor-pointer font-semibold text-[14px] md:text-[14.88px]">
+            Login
+          </span>
+        </div>
+      </mat-menu>
     </div>
   </div>
 </section>

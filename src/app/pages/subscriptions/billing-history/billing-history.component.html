@@ -1,0 +1,43 @@
+<div class="p-4">
+  <div class="flex justify-between">
+
+    <app-page-title>
+      <p page-title>Billing history</p>
+      <p page-description>Monthly plan renewable on March 25, 2025 for N0</p>
+    </app-page-title>
+
+    <app-button [inputClass]="'!text-[#F66E6E] !bg-[#FEE8E8] !border-[#F66E6E] !border-1 !py-[0.5rem]'">
+      Cancel Subscription
+    </app-button>
+
+  </div>
+
+  <div class="bg-white rounded-lg p-4 mt-8">
+
+    <table class="w-full bg-white divide-y divide-[#EEEFF2]">
+      <thead>
+        <tr class="text-[#1F2937] text-left text-[12px]/[18px] font-semibold">
+          <th class="px-4 py-2">Plan Type</th>
+          <th class="px-4 py-2">Amount(N)</th>
+          <th class="px-4 py-2">Date of Subscription</th>
+          <th class="px-4 py-2">Expiry Date</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-[#EEEFF2]">
+        <tr class="text-[#535352] text-[12px]/[18px]">
+          <td class="px-4 py-2">Monthly Basic Plan</td>
+          <td class="px-4 py-2 text-[#F66E6E]">-{{20000}}</td>
+          <td class="px-4 py-2">{{'March 25, 2025'}}</td>
+          <td class="px-4 py-2">{{'April 25, 2025'}}</td>
+        </tr>
+        <tr class="text-[#535352] text-[12px]/[18px]">
+          <td class="px-4 py-2">Monthly Basic Plan</td>
+          <td class="px-4 py-2 text-[#F66E6E]">-{{20000}}</td>
+          <td class="px-4 py-2">{{'March 25, 2025'}}</td>
+          <td class="px-4 py-2">{{'April 25, 2025'}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>

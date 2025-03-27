@@ -74,6 +74,34 @@ export const routes: Routes = [
           ),
         // canActivate: [authGuard],
       },
+      {
+        path: 'subscription',
+        loadComponent: () =>
+          import('./pages/subscriptions/subscriptions.component').then(
+            (m) => m.SubscriptionsComponent
+          ),
+      },
+      {
+        path: 'subscription/billing-history',
+        loadComponent: () =>
+          import(
+            './pages/subscriptions/billing-history/billing-history.component'
+          ).then((m) => m.BillingHistoryComponent),
+      },
+      {
+        path: 'plugins',
+        loadComponent: () =>
+          import('./pages/plugins/plugins.component').then(
+            (m) => m.PluginsComponent
+          ),
+      },
+      {
+        path: 'wallet',
+        loadComponent: () =>
+          import('./pages/wallet/wallet.component').then(
+            (m) => m.WalletComponent
+          ),
+      },
     ],
   },
 ];

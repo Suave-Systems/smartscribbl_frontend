@@ -10,17 +10,20 @@
   background-repeat: no-repeat, no-repeat;
   background-position: top left, bottom right;
 }
+@media (min-width: 768px) {
+  .get_started_button:after {
+    content: url(../../../assets/svg/get_started_arrow.svg);
+    position: absolute;
+    display: block;
+    top: -170px;
+    right: -270px;
+  }
 
-.get_started_button::after {
-  content: url(../../../assets/svg/get_started_arrow.svg);
-  position: absolute;
-  top: -170px;
-  right: -270px;
-}
-
-.choose_plan::after {
-  content: url(../../../assets/svg/plans_arrow.svg);
-  position: absolute;
-  top: -30px;
-  right: -200px;
+  .choose_plan:after {
+    content: url(../../../assets/svg/plans_arrow.svg);
+    position: absolute;
+    display: block;
+    top: -30px;
+    right: -200px;
+  }
 }

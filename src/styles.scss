@@ -36,3 +36,11 @@ body {
     transform: rotate(360deg);
   }
 }
+
+.wallet-dialog {
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    padding: 20px;
+    border-radius: 32px;
+    border: none;
+  }
+}
