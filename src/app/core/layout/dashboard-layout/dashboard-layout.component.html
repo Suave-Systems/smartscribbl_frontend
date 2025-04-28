@@ -5,13 +5,13 @@
 
 
     <!-- Content Area -->
-    <main class="flex-grow container overflow-y-scroll">
+    <main class="flex-grow container">
       <div class="grid grid-cols-1">
         <!-- Header -->
         <div class="h-[50px] w-full">
           <app-header></app-header>
         </div>
-        <div class="h-[calc(100vh-51px)] bg-[#F8F8F8] p-2">
+        <div class="h-[calc(100vh-51px)] bg-[#F8F8F8] p-2 overflow-y-scroll">
           <router-outlet></router-outlet>
         </div>
       </div>

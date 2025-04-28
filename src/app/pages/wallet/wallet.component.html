@@ -1,0 +1,89 @@
+<div class="p-4">
+  <app-page-title>
+    <p page-title>Wallet</p>
+    <p page-description>Manage your wallet here</p>
+  </app-page-title>
+
+  <div class="bg-white rounded-lg p-4 my-4">
+    <div class="flex items-center">
+      <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="35.6484" cy="35.6484" r="35.6484" fill="#E7F2FA" />
+        <path
+          d="M46.8751 27.0833H44.5001V25.5C44.4988 24.2406 43.998 23.0332 43.1074 22.1426C42.2169 21.2521 41.0095 20.7513 39.7501 20.75H23.1251C22.0753 20.75 21.0684 21.167 20.3261 21.9094C19.5838 22.6517 19.1667 23.6585 19.1667 24.7083V44.5C19.168 45.7594 19.6689 46.9668 20.5594 47.8574C21.4499 48.7479 22.6574 49.2487 23.9167 49.25H46.8751C47.9249 49.25 48.9317 48.833 49.674 48.0906C50.4164 47.3483 50.8334 46.3415 50.8334 45.2917V31.0417C50.8334 29.9919 50.4164 28.985 49.674 28.2427C48.9317 27.5004 47.9249 27.0833 46.8751 27.0833ZM23.1251 22.3333H39.7501C40.5895 22.3346 41.3943 22.6686 41.9879 23.2622C42.5815 23.8558 42.9155 24.6605 42.9167 25.5V27.0833H23.1251C22.8132 27.0833 22.5044 27.0219 22.2162 26.9025C21.9281 26.7832 21.6662 26.6083 21.4457 26.3877C21.2252 26.1672 21.0502 25.9054 20.9309 25.6172C20.8115 25.3291 20.7501 25.0202 20.7501 24.7083C20.7501 24.3964 20.8115 24.0876 20.9309 23.7995C21.0502 23.5113 21.2252 23.2495 21.4457 23.029C21.6662 22.8084 21.9281 22.6335 22.2162 22.5141C22.5044 22.3948 22.8132 22.3333 23.1251 22.3333ZM49.2501 41.3333H46.0834C45.2436 41.3333 44.4381 40.9997 43.8442 40.4058C43.2504 39.812 42.9167 39.0065 42.9167 38.1667C42.9167 37.3268 43.2504 36.5214 43.8442 35.9275C44.4381 35.3336 45.2436 35 46.0834 35H49.2501V41.3333ZM49.2501 33.4167H46.0834C45.4596 33.4167 44.842 33.5395 44.2657 33.7782C43.6894 34.0169 43.1657 34.3668 42.7247 34.8079C42.2836 35.249 41.9337 35.7726 41.695 36.3489C41.4563 36.9252 41.3334 37.5429 41.3334 38.1667C41.3334 38.7904 41.4563 39.4081 41.695 39.9844C41.9337 40.5607 42.2836 41.0843 42.7247 41.5254C43.1657 41.9665 43.6894 42.3164 44.2657 42.5551C44.842 42.7938 45.4596 42.9167 46.0834 42.9167H49.2501V45.2917C49.2501 45.9216 48.9999 46.5256 48.5545 46.971C48.1091 47.4164 47.505 47.6667 46.8751 47.6667H23.9167C23.0773 47.6654 22.2726 47.3314 21.679 46.7378C21.0854 46.1442 20.7513 45.3395 20.7501 44.5V27.8734C21.4341 28.3896 22.2685 28.6683 23.1251 28.6667H46.8751C47.505 28.6667 48.1091 28.9169 48.5545 29.3623C48.9999 29.8077 49.2501 30.4118 49.2501 31.0417V33.4167Z"
+          fill="#0D79C9" />
+      </svg>
+      <div class="ml-2">
+        <p class="text-[15px] ">Total balance
+        </p>
+        <p class="text-[40px]/[44px] font-bolder">
+          @if (balanceLoading() ) {
+          <span class="flex">
+            <span class="spinner"></span>
+          </span>
+          } @else {
+          {{(balance()?.balance || 0) |currency : 'NGN' : 'N' }}
+          }
+        </p>
+      </div>
+
+      <app-button (buttonClick)="onFundWallet()" inputClass="!text-[14px]/[20px] !py-2 !px-12 font-normal"
+        class="ml-auto"> Add Money</app-button>
+    </div>
+  </div>
+
+  <p class="text-[20px]/[44px] font-bold ">Transaction History</p>
+
+  <div class="bg-white rounded-lg p-4 ">
+
+    <table class="w-full bg-white divide-y divide-[#EEEFF2]">
+      <thead>
+        <tr class="text-[#1F2937] text-left text-[12px]/[18px] font-semibold">
+          <th class="px-4 py-2">Amount(N)</th>
+          <th class="px-4 py-2">Transaction Type</th>
+          <th class="px-4 py-2">Date </th>
+          <th class="px-4 py-2">Status</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-[#EEEFF2]">
+        @if ((transactionHistory().length ) > 0) {
+        @for (transaction of transactionHistory(); track transaction.id) {
+        <tr class="text-[#535352] text-[12px]/[18px]">
+          <td class="px-4 py-2 ">
+            <div class="flex items-center">
+              <span class="inline-block w-2 h-2 rounded-full mx-2"
+                [ngClass]="{'bg-[#F66E6E]': transaction.payment_type === 'SUBSCRIPTION', 'bg-[#16B464]': transaction.payment_type === 'WALLET_TOPUP'}"></span>
+              <span>
+                {{transaction?.amount | currency : 'NGN' : 'N'}}
+              </span>
+            </div>
+
+          </td>
+          <td class="px-4 py-2">{{transaction?.payment_type}}</td>
+          <td class="px-4 py-2">{{transaction?.date_created | date : 'longDate'}}</td>
+          <td class="px-4 py-2"><span class="rounded px-2 py-1"
+              [ngClass]="{'text-[#F66E6E] bg-[#FEE8E8]': transaction?.status === 'FAILED', 'text-[#FFA500] bg-[#FFE5B4]': transaction?.status === 'PENDING', 'text-[#007F55] bg-[#E6F2EE]': transaction?.status === 'SUCCESS'}">{{
+              transaction?.status
+              }}</span></td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+
+    @if (isLoading()) {
+    <div class="h-[50vh] flex justify-center items-center">
+      <div>
+        <div class="flex items-center justify-center">
+          <span class="table-spinner"></span>
+        </div>
+        <p class="text-center mt-8">Please wait...</p>
+      </div>
+    </div>
+    }
+    @if (transactionHistory().length === 0 && !isLoading()) {
+    <div>
+      <app-empty-state></app-empty-state>
+    </div>
+    }
+  </div>
+</div>

@@ -8,7 +8,8 @@
   <ul class="flex flex-col gap-y-[12px] cursor-pointer">
     @for (route of routes; track route._id) {
     <!-- [routerLink]="[route.link]" routerLinkActive="active" -->
-    <li (click)="caughtUs()" class="flex p-4 items-center hover:rounded-full hover:bg-secondary hover:text-primary">
+    <li (click)="caughtUs(route)"
+      class="flex p-4 items-center hover:rounded-full hover:bg-secondary hover:text-primary">
       <span [innerHTML]="route.icon">
       </span>
 

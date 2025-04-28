@@ -1,0 +1,163 @@
+<div class="p-4">
+  <div class="flex justify-between items-end">
+    <app-page-title>
+      <p page-title>Subscriptions</p>
+      <p page-description>An overview of all your subscriptions</p>
+    </app-page-title>
+
+    <div class="flex flex-col items-center">
+      <app-button [routerLink]="['/main/subscription/billing-history']"
+        inputClass="!text-primary !bg-white !border-primary !border-1 !py-2">
+        Manage Subscription
+      </app-button>
+      <p class="text-grey text-[12px]">
+        Monthly plan renewable on March 25, 2025 for N0
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-8 flex items-center justify-center">
+    <div class="choose_plan relative flex gap-x-8 items-center justify-center">
+
+      <p (click)="yearly = false" class="text-[14px]">Pay Monthly </p>
+
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input [(ngModel)]="yearly" type="checkbox" class="sr-only peer" />
+        <div class="w-10 h-5 bg-gray-300  rounded-full peer peer-checked:bg-primary
+                    after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:w-3 after:h-3 after:rounded-full
+                    after:transition-all peer-checked:after:translate-x-5"></div>
+      </label>
+      <p (click)="yearly = true" class="text-[14px]">Pay Yearly</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-[1.5rem] px-4 md:px-8 lg:px-[5rem]">
+
+    @for (plan of planList(); track plan.id) {
+    <!-- <div class="pricing-card rounded-[2rem] mt-8 border border-[#E7E7E7] p-[1.5rem]">
+      <p class="font-bold text-[22px]/[26.4px]">
+        {{plan?.name}}
+        <span class="px-2 py-1 bg-[#E6F2EE] rounded font-semibold text-[#007F55] text-[12px] ">Active</span>
+      </p>
+      <p class="text-grey">Perfect for casual users who need essential grammar and spell-checking.</p>
+      <p class="my-[1.5rem]">
+        <span class="price font-bolder text-[3.5rem]/[4.125rem]">
+          N{{plan?.price}}
+        </span>
+        <span class="duration">
+          / Month
+        </span>
+      </p>
+
+      <app-button [inputClass]="'!w-full !text-[#F66E6E] !bg-[#FEE8E8] !border-[#F66E6E] !border-1 !py-[0.5rem]'">
+        Cancel Subscription
+      </app-button>
+
+      <ul class="mt-[2.5rem] space-y-3">
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Basic grammar and spell check</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Spelling suggestions</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Punctuation correction</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Limited AI-based word suggestions</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">500-word limit per check</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Web and Browser Extension</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/no_list_style.svg" alt="">
+          <span class="text-[16px]/[19.2px] text-grey">No plagiarism detection</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/no_list_style.svg" alt="">
+          <span class="text-[16px]/[19.2px] text-grey">No SEO features</span>
+        </li>
+      </ul>
+    </div> -->
+
+    <div class="bg-primary text-white pricing-card rounded-[2rem] mt-8 border border-[#E7E7E7] p-[1.5rem]">
+      <p class="font-bold text-[22px]/[26.4px]">
+        {{plan?.name}}
+        @if (currentPlan()?.id === plan?.id) {
+        <span class="px-2 py-1 bg-[#E6F2EE] rounded font-semibold text-[#007F55] text-[12px] ">Active</span>
+        }
+      </p>
+      <p>
+        For professionals and writers who need in-depth corrections and writing enhancement.
+      </p>
+      <p class="my-[1.5rem]">
+        <span class="price font-bolder text-[3.5rem]/[4.125rem]">
+          N{{yearly ? ((plan?.price * 12) | number : '0.0-0') : (plan?.price | number : '0.0-0')}}
+        </span>
+        <span class="duration">
+          / Month
+        </span>
+      </p>
+      @if (currentPlan()?.id === plan?.id) {
+      <app-button (buttonClick)="cancelSubscription(plan?.id)"
+        [inputClass]="'!w-full !text-[#F66E6E] !bg-[#FEE8E8] !border-[#F66E6E] !border-1 !py-[0.5rem]'">
+        Cancel Subscription
+      </app-button>
+      } @else {
+      <app-button (buttonClick)="onSubscribe(plan?.id)"
+        [inputClass]="'!w-full !bg-white !text-primary !border !py-[0.5rem]'">
+        Subscribe
+      </app-button>
+      }
+
+      <ul class="mt-[2.5rem] space-y-3">
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Everything in Basic Plan</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Advanced grammar and sentence structure correction</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">AI-powered tone and clarity suggestions</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Plagiarism checker (10 checks per month)</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Unlimited word count per check</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Customizable personal dictionary</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Available on Web, Browser Extension, and
+            Desktop App</span>
+        </li>
+        <li class="flex items-center gap-3">
+          <img src="assets/svg/list_image.svg" alt="">
+          <span class="text-[16px]/[19.2px]">Readability Improvement Tips</span>
+        </li>
+      </ul>
+    </div>
+    }
+
+  </div>
+
+
+</div>
