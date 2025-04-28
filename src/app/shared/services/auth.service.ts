@@ -35,7 +35,7 @@ export class AuthService {
         next: (res) => {
           this.toastr.success(res.message, 'SUCCESS');
           this.router.navigate(['/auth/otp'], {
-            queryParams: { mode: 'login', otp: res.otp },
+            queryParams: { mode: 'login' },
           });
           responseSubject.complete();
         },
