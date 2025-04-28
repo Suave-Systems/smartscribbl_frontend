@@ -13,8 +13,17 @@
           fill="#0D79C9" />
       </svg>
       <div class="ml-2">
-        <p class="text-[15px]">Total balance</p>
-        <p class="text-[40px]/[44px] font-bolder">N 135,000</p>
+        <p class="text-[15px] ">Total balance
+        </p>
+        <p class="text-[40px]/[44px] font-bolder">
+          @if (balanceLoading() ) {
+          <span class="flex">
+            <span class="spinner"></span>
+          </span>
+          } @else {
+          {{(balance()?.balance || 0) |currency : 'NGN' : 'N' }}
+          }
+        </p>
       </div>
 
       <app-button (buttonClick)="onFundWallet()" inputClass="!text-[14px]/[20px] !py-2 !px-12 font-normal"
@@ -36,33 +45,45 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-[#EEEFF2]">
+        @if ((transactionHistory().length ) > 0) {
+        @for (transaction of transactionHistory(); track transaction.id) {
         <tr class="text-[#535352] text-[12px]/[18px]">
           <td class="px-4 py-2 ">
             <div class="flex items-center">
-              <span class="inline-block w-2 h-2 bg-[#F66E6E] rounded-full mx-2"></span>
+              <span class="inline-block w-2 h-2 rounded-full mx-2"
+                [ngClass]="{'bg-[#F66E6E]': transaction.payment_type === 'SUBSCRIPTION', 'bg-[#16B464]': transaction.payment_type === 'WALLET_TOPUP'}"></span>
               <span>
-                {{25000}}
+                {{transaction?.amount | currency : 'NGN' : 'N'}}
               </span>
             </div>
 
           </td>
-          <td class="px-4 py-2">Top up</td>
-          <td class="px-4 py-2">{{'March 25, 2025'}}</td>
-          <td class="px-4 py-2"><span class="text-[#F66E6E] bg-[#FEE8E8] rounded px-2 py-1">Failed</span></td>
+          <td class="px-4 py-2">{{transaction?.payment_type}}</td>
+          <td class="px-4 py-2">{{transaction?.date_created | date : 'longDate'}}</td>
+          <td class="px-4 py-2"><span class="rounded px-2 py-1"
+              [ngClass]="{'text-[#F66E6E] bg-[#FEE8E8]': transaction?.status === 'FAILED', 'text-[#FFA500] bg-[#FFE5B4]': transaction?.status === 'PENDING', 'text-[#007F55] bg-[#E6F2EE]': transaction?.status === 'SUCCESS'}">{{
+              transaction?.status
+              }}</span></td>
         </tr>
-        <tr class="text-[#535352] text-[12px]/[18px]">
-          <td class="px-4 py-2 ">
-            <span class="inline-block w-2 h-2 bg-[#16B464] rounded-full mx-2"></span>
-            <span>
-              {{20000}}
-            </span>
-          </td>
-          <td class="px-4 py-2">Monthly Basic Plan Subscription</td>
-          <td class="px-4 py-2">{{'March 25, 2025'}}</td>
-          <td class="px-4 py-2"><span class="text-[#007F55] bg-[#E6F2EE] rounded px-2 py-1">Successful</span></td>
-        </tr>
+        }
+        }
       </tbody>
     </table>
 
+    @if (isLoading()) {
+    <div class="h-[50vh] flex justify-center items-center">
+      <div>
+        <div class="flex items-center justify-center">
+          <span class="table-spinner"></span>
+        </div>
+        <p class="text-center mt-8">Please wait...</p>
+      </div>
+    </div>
+    }
+    @if (transactionHistory().length === 0 && !isLoading()) {
+    <div>
+      <app-empty-state></app-empty-state>
+    </div>
+    }
   </div>
 </div>

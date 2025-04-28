@@ -19,29 +19,30 @@
   <div class="mt-8 flex items-center justify-center">
     <div class="choose_plan relative flex gap-x-8 items-center justify-center">
 
-      <p class="text-[14px]">Pay Monthly </p>
+      <p (click)="yearly = false" class="text-[14px]">Pay Monthly </p>
 
       <label class="relative inline-flex items-center cursor-pointer">
-        <input type="checkbox" class="sr-only peer" />
+        <input [(ngModel)]="yearly" type="checkbox" class="sr-only peer" />
         <div class="w-10 h-5 bg-gray-300  rounded-full peer peer-checked:bg-primary
                     after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:w-3 after:h-3 after:rounded-full
                     after:transition-all peer-checked:after:translate-x-5"></div>
       </label>
-      <p class="text-[14px]">Pay Yearly</p>
+      <p (click)="yearly = true" class="text-[14px]">Pay Yearly</p>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-[1.5rem] px-4 md:px-[8rem]">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-[1.5rem] px-4 md:px-8 lg:px-[5rem]">
 
-    <div class="pricing-card rounded-[2rem] mt-8 border border-[#E7E7E7] p-[1.5rem]">
+    @for (plan of planList(); track plan.id) {
+    <!-- <div class="pricing-card rounded-[2rem] mt-8 border border-[#E7E7E7] p-[1.5rem]">
       <p class="font-bold text-[22px]/[26.4px]">
-        Basic
+        {{plan?.name}}
         <span class="px-2 py-1 bg-[#E6F2EE] rounded font-semibold text-[#007F55] text-[12px] ">Active</span>
       </p>
       <p class="text-grey">Perfect for casual users who need essential grammar and spell-checking.</p>
       <p class="my-[1.5rem]">
         <span class="price font-bolder text-[3.5rem]/[4.125rem]">
-          N0
+          N{{plan?.price}}
         </span>
         <span class="duration">
           / Month
@@ -86,25 +87,37 @@
           <span class="text-[16px]/[19.2px] text-grey">No SEO features</span>
         </li>
       </ul>
-    </div>
+    </div> -->
 
     <div class="bg-primary text-white pricing-card rounded-[2rem] mt-8 border border-[#E7E7E7] p-[1.5rem]">
-      <p class="font-bold text-[22px]/[26.4px]">Advanced</p>
+      <p class="font-bold text-[22px]/[26.4px]">
+        {{plan?.name}}
+        @if (currentPlan()?.id === plan?.id) {
+        <span class="px-2 py-1 bg-[#E6F2EE] rounded font-semibold text-[#007F55] text-[12px] ">Active</span>
+        }
+      </p>
       <p>
         For professionals and writers who need in-depth corrections and writing enhancement.
       </p>
       <p class="my-[1.5rem]">
         <span class="price font-bolder text-[3.5rem]/[4.125rem]">
-          N20,000
+          N{{yearly ? ((plan?.price * 12) | number : '0.0-0') : (plan?.price | number : '0.0-0')}}
         </span>
         <span class="duration">
           / Month
         </span>
       </p>
-
-      <app-button [inputClass]="'!w-full !bg-white !text-primary !border !py-[0.5rem]'">
+      @if (currentPlan()?.id === plan?.id) {
+      <app-button (buttonClick)="cancelSubscription(plan?.id)"
+        [inputClass]="'!w-full !text-[#F66E6E] !bg-[#FEE8E8] !border-[#F66E6E] !border-1 !py-[0.5rem]'">
+        Cancel Subscription
+      </app-button>
+      } @else {
+      <app-button (buttonClick)="onSubscribe(plan?.id)"
+        [inputClass]="'!w-full !bg-white !text-primary !border !py-[0.5rem]'">
         Subscribe
       </app-button>
+      }
 
       <ul class="mt-[2.5rem] space-y-3">
         <li class="flex items-center gap-3">
@@ -142,7 +155,7 @@
         </li>
       </ul>
     </div>
-
+    }
 
   </div>
 

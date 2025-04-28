@@ -20,15 +20,18 @@
     <div class="flex flex-col items-center">
       <div>
         <span class="text-primary text-[14px]">Wallet Balance -</span>
-        <span class="text-primary text-[14px] font-bold"> N135,874.00</span>
+        <span class="text-primary text-[14px] font-bold">
+          {{(data.balance?.balance || 0) | currency : 'NGN' : 'N' }}
+        </span>
       </div>
       <p>
-        <input [value]="'0.00'" class="text-primary text-[48px] w-3xs" type="text">
+        <input [(ngModel)]="amount" class="text-primary text-[48px] w-3xs" type="text">
       </p>
     </div>
   </div>
 
   <div class="flex justify-center mt-5">
-    <app-button inputClass="!px-12 !py-2 !text-[14px]">Proceed</app-button>
+    <app-button [buttonDisabled]="isLoading()" [loading]="isLoading()" (buttonClick)="onFundWallet()"
+      inputClass="!px-12 !py-2 !text-[14px]">Proceed</app-button>
   </div>
 </div>
