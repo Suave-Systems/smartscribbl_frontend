@@ -1,0 +1,135 @@
+<div class="w-full py-6 px-8">
+
+  <div class=" flex justify-end">
+    <button [mat-dialog-close]="true">
+      <svg width="10" height="10" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13 1L1 13M1 1L13 13" stroke="#717680" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="w-full flex justify-center">
+    <img class="h-10" src="assets/scribbl-pencil.png" alt="">
+  </div>
+
+  <p class="text-center text-black font-bolder text-[20px]/[28px] mb-3">
+    Set Writing Mode
+  </p>
+  <p class="text-center text-[#535862] text-[12px]/[20px] mb-3">
+    Get tailored writing feedback on how, where, and why you’re writing.
+  </p>
+
+  <div class="flex flex-col divide-y divide-[#EEEEEE]">
+    <div class="px-4 py-2">
+      <label class="text-[14px]/[20px] font-bold txt-[#52525B]">
+        Audience
+      </label>
+      <div class="flex gap-2 flex-wrap">
+        @for (option of writingOption?.audience_types; track option.key) {
+        <div>
+          <input (input)="onSelectAudience(option)" type="checkbox" [checked]="option.key === selectedAudience?.key"
+            [id]="option.key" class="hidden peer">
+          <label [for]="option.key"
+            class="font-medium text-sm px-2 py-1 text-primary border border-[2px] text-[12px] border-blue-light rounded-full cursor-pointer peer-checked:bg-primary peer-checked:text-white transition">
+            <span class="text-nowrap">
+              {{ option.key }}
+            </span>
+          </label>
+        </div>
+        }
+      </div>
+      <p class="text-[#2F2F2F] text-[14px] mt-2">{{selectedAudience?.label}}</p>
+    </div>
+    <div class="px-4 py-2">
+      <label class="text-[14px]/[20px] font-bold txt-[#52525B]">
+        Tone
+      </label>
+      <div class="flex gap-2 flex-wrap">
+        @for (option of writingOption?.tone_types; track option.key) {
+        <div>
+          <input (input)="onSelectTone(option)" type="checkbox" [checked]="option.key === selectedTone?.key"
+            [id]="option.key" class="hidden peer">
+          <label [for]="option.key"
+            class="font-medium text-sm px-2 py-1 text-primary border border-[2px] text-[12px] border-blue-light rounded-full cursor-pointer peer-checked:bg-primary peer-checked:text-white transition">
+            <span class="text-nowrap">
+              {{ option.key }}
+            </span>
+          </label>
+        </div>
+        }
+      </div>
+      <p class="text-[#2F2F2F] text-[14px] mt-2">{{selectedTone?.label}}</p>
+    </div>
+    <div class="px-4 py-2">
+      <label class="text-[14px]/[20px] font-bold txt-[#52525B]">
+        Context
+      </label>
+      <div class="flex gap-2 flex-wrap">
+        @for (option of writingOption?.context_types; track option.key) {
+        <div>
+          <input (input)="onSelectContext(option)" type="checkbox" [checked]="option.key === selectedContext?.key"
+            [id]="option.key" class="hidden peer">
+          <label [for]="option.key"
+            class="font-medium text-sm px-2 py-1 text-primary border border-[2px] text-[12px] border-blue-light rounded-full cursor-pointer peer-checked:bg-primary peer-checked:text-white transition">
+            <span class="text-nowrap">
+              {{ option.key }}
+            </span>
+          </label>
+        </div>
+        }
+      </div>
+      <p class="text-[#2F2F2F] text-[14px] mt-2">{{selectedContext?.label}}</p>
+    </div>
+    <div class="px-4 py-2">
+      <label class="text-[14px]/[20px] font-bold txt-[#52525B]">
+        Goal
+      </label>
+      <div class="flex gap-2 flex-wrap">
+        @for (option of writingOption?.goal_types; track option.key) {
+        <div>
+          <input (input)="onSelectGoal(option)" type="checkbox" [checked]="option.key === selectedGoal?.key"
+            [id]="option.key" class="hidden peer">
+          <label [for]="option.key"
+            class="font-medium text-sm px-2 py-1 text-primary border border-[2px] text-[12px] border-blue-light rounded-full cursor-pointer peer-checked:bg-primary peer-checked:text-white transition">
+            <span class="text-nowrap">
+              {{ option.key }}
+            </span>
+          </label>
+        </div>
+        }
+      </div>
+      <p class="text-[#2F2F2F] text-[14px] mt-2">{{selectedGoal?.label}}</p>
+    </div>
+    <div class="px-4 py-2">
+      <label class="text-[14px]/[20px] font-bold txt-[#52525B]">
+        English Type
+      </label>
+      <div class="flex gap-2 flex-wrap">
+        @for (option of writingOption?.english_types; track option.key) {
+        <div>
+          <input (input)="onSelectEnglish(option)" type="checkbox" [checked]="option.key === selectedEnglish?.key"
+            [id]="option.key" class="hidden peer">
+          <label [for]="option.key"
+            class="font-medium text-sm px-2 py-1 text-primary border border-[2px] text-[12px] border-blue-light rounded-full cursor-pointer peer-checked:bg-primary peer-checked:text-white transition">
+            <span class="text-nowrap">
+              {{ option.key }}
+            </span>
+          </label>
+        </div>
+        }
+      </div>
+      <p class="text-[#2F2F2F] text-[14px] mt-2">{{selectedEnglish?.label}}</p>
+    </div>
+  </div>
+
+
+
+  <div class="flex justify-center gap-4 mt-5">
+    <app-button (buttonClick)="onResetDefault()"
+      inputClass="!border-1 !border-primary !py-[0.5rem] !px-[4rem] !bg-white !text-primary">Reset to
+      Default</app-button>
+    <app-button (click)="saveWritingOption()" inputClass="!py-[0.5rem] !px-[4rem]">Start Writing</app-button>
+  </div>
+
+</div>

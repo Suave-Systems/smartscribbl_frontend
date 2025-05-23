@@ -102,6 +102,20 @@ export const routes: Routes = [
             (m) => m.WalletComponent
           ),
       },
+      {
+        path: 'create-article',
+        loadComponent: () =>
+          import('./pages/article/article.component').then(
+            (m) => m.ArticleComponent
+          ),
+      },
+      {
+        path: 'edit-article/:id',
+        loadComponent: () =>
+          import('./pages/article/article.component').then(
+            (m) => m.ArticleComponent
+          ),
+      },
     ],
   },
 ];
