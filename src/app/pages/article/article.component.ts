@@ -146,6 +146,7 @@ export class ArticleComponent implements OnInit {
   }
 
   onProcessDocument() {
+    this.ai_refinement = false;
     this.loadingSuggestions.set(true);
     this.writingService
       .processDocument({
