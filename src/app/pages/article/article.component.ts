@@ -50,7 +50,10 @@ export class ArticleComponent implements OnInit {
   private searchQuerySubject: Subject<string> = new Subject<string>();
 
   private subscriptions: Subscription[] = [];
-  writingOption = computed(() => this.writingService.writingOptions());
+  private writingOption = computed(() => this.writingService.writingOptions());
+  ai_refinement = false;
+  refinedText: any = {};
+
   constructor() {
     effect(() => {
       this.writingOption();
@@ -156,6 +159,13 @@ export class ArticleComponent implements OnInit {
           this.correctedText = response.data.result.data.corrected_text;
           this.suggestions = response.data.result.data.corrections;
           this.selectedCorrectionIndex = 0;
+          if (this.selectedFeature === 'AI_REFINEMENT') {
+            this.ai_refinement = true;
+            this.refinedText = {
+              text: response.data.result.data.revamped_text,
+              type: 'refinement',
+            };
+          }
         },
         error: () => {
           this.loadingSuggestions.set(false);
@@ -206,6 +216,9 @@ export class ArticleComponent implements OnInit {
           correction.corrected_text,
           false
         );
+        break;
+      case 'refinement':
+        this.searchQuery = this.refinedText.text;
         break;
 
       default:

@@ -24,9 +24,16 @@
     <div class="flex">
       @for (feature of featuresList(); track $index) {
       <button (click)="selectedFeature = feature.feature"
-        class="text-[12px] text-[#414651] mx-2 py-1 text-nowrap focus:outline-none"
+        class="relative text-[12px] text-[#414651] mx-2 py-1 text-nowrap focus:outline-none"
         [ngClass]="{'border-b-2 border-primary ': feature.feature == selectedFeature}">
         {{feature?.name}}
+        @if (suggestions && suggestions.length > 0 && feature.feature == selectedFeature) {
+        <span
+          class="absolute -top-1 -right-2 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full">
+
+          {{suggestions.length}}
+        </span>
+        }
       </button>
       }
     </div>
@@ -39,7 +46,7 @@
     </div>
 
 
-    @if (suggestions && suggestions.length > 0) {
+    @if (!ai_refinement && suggestions && suggestions.length > 0) {
     <div class="results">
       <ul class="max-w-md mx-auto divide-y divide-gray-200 border border-gray-300 rounded-md">
         @for (result of suggestions; track $index) {
@@ -74,5 +81,16 @@
     </div>
     }
 
+    @if (ai_refinement) {
+    <div class="results">
+      <ul class="max-w-md mx-auto divide-y divide-gray-200 border border-gray-300 rounded-md">
+        <li class="bg-blue-50 px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
+          <p class="text-[10px]">Type: Refinement</p>
+          <p class="text-[14px]" [innerHTML]="refinedText.text"></p>
+          <app-button (click)="onAcceptChange(refinedText)" inputClass="!px-2 !py-1">Accept</app-button>
+        </li>
+      </ul>
+    </div>
+    }
   </div>
 </div>
