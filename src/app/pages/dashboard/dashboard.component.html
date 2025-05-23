@@ -30,12 +30,25 @@
   <div class="grid grid-cols-4 mt-4 gap-8">
     @for (article of articleList(); track article.id) {
     <div [routerLink]="['/main/edit-article', article.id]" routerLinkActive="router-link-active"
-      class="cursor-pointer bg-white rounded-lg p-4 ">
-      <!-- <p class="text-[15px] font-bold">
-          Article 1
-        </p> -->
-      <p [innerHTML]="article?.origin_document" class="mt-3 text-[12px]">
+      class="cursor-pointer bg-white rounded-lg p-4 flex flex-col gap-2">
+      <p class="text-[15px] font-bold">
+        {{article?.title}}
       </p>
+      <p [innerHTML]="article?.origin_document" class="mt-3 text-[12px] text-[#6D6D6D] flex-grow">
+      </p>
+
+      <div
+        class="border-t-[0.8px] border-[#C3C3C3] flex justify-between items-center px-4 py-2 text-[10px] text-[#6D6D6D]">
+        <span>
+          {{article?.date_created | date : 'shortTime'}}
+        </span>
+        <span>
+          {{article?.date_created | date : 'shortDate'}}
+        </span>
+        <span class="text-primary">
+          {{article?.character_count}}
+        </span>
+      </div>
     </div>
     }
   </div>

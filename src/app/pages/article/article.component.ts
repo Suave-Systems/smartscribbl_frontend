@@ -224,9 +224,11 @@ export class ArticleComponent implements OnInit {
   }
 
   onCreateArticle() {
+    const title = this.searchQuery.split(' ');
     return this.writingService.createArticle({
       origin_document: this.searchQuery,
       ...this.writingOption(),
+      title: this.searchQuery.trim().split('\n')[0].slice(0, 80),
     });
   }
 
@@ -236,6 +238,8 @@ export class ArticleComponent implements OnInit {
       origin_document: this.searchQuery,
       modified_document: this.searchQuery,
       subscribed_feature: this.selectedFeature,
+      title: this.searchQuery.trim().split('\n')[0].slice(0, 80),
+      ...this.writingOption(),
       seed: 0,
     });
   }

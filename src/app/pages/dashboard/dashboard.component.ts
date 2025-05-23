@@ -7,6 +7,7 @@ import { RouterLink } from '@angular/router';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { DialogService } from '../../shared/services/dialog.service';
 import { WritingModeComponent } from '../../shared/components/writing-mode/writing-mode.component';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,6 +17,7 @@ import { WritingModeComponent } from '../../shared/components/writing-mode/writi
     PageTitleComponent,
     RouterLink,
     EmptyStateComponent,
+    DatePipe,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
