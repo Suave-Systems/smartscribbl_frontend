@@ -21,11 +21,14 @@ import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Correction, FeaturesResponse } from '../../models/api-responses';
+import { SmartEditorComponent } from '../../shared/components/smart-editor/smart-editor.component';
+import { DialogService } from '../../shared/services/dialog.service';
+import { WritingModeComponent } from '../../shared/components/writing-mode/writing-mode.component';
 
 @Component({
   selector: 'app-article',
   standalone: true,
-  imports: [FormsModule, NgClass, ButtonComponent],
+  imports: [FormsModule, NgClass, ButtonComponent, SmartEditorComponent],
   templateUrl: './article.component.html',
   styleUrl: './article.component.scss',
 })
@@ -43,6 +46,7 @@ export class ArticleComponent implements OnInit {
   creatingArticle = signal(false);
   loadingArticle = signal(false);
 
+  private dialogService = inject(DialogService);
   private writingService = inject(WritingService);
   private route = inject(ActivatedRoute);
 
@@ -53,6 +57,7 @@ export class ArticleComponent implements OnInit {
   private writingOption = computed(() => this.writingService.writingOptions());
   ai_refinement = false;
   refinedText: any = {};
+  title = '';
 
   constructor() {
     effect(() => {
@@ -63,6 +68,7 @@ export class ArticleComponent implements OnInit {
   ngOnInit(): void {
     this.getFeatures();
     this.checkMode();
+    // this.onSetWritingMode();
 
     const sub = this.searchQuerySubject
       .pipe(
@@ -101,6 +107,15 @@ export class ArticleComponent implements OnInit {
       this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
+  onSetWritingMode() {
+    this.dialogService.openDialog(WritingModeComponent, {
+      width: '640px',
+      data: {
+        mode: 'edit',
+      },
+    });
+  }
+
   onInputChange(query: string): void {
     this.searchQuerySubject.next(query);
   }
@@ -133,6 +148,7 @@ export class ArticleComponent implements OnInit {
       next: (res) => {
         this.loadingArticle.set(false);
         this.searchQuery = res.origin_document;
+        this.title = res.title;
         this.onProcessDocument();
         // update the UI with the article body
       },
@@ -238,11 +254,11 @@ export class ArticleComponent implements OnInit {
   }
 
   onCreateArticle() {
-    const title = this.searchQuery.split(' ');
+    this.title = this.searchQuery.trim().split('\n')[0].slice(0, 25);
     return this.writingService.createArticle({
       origin_document: this.searchQuery,
       ...this.writingOption(),
-      title: this.searchQuery.trim().split('\n')[0].slice(0, 80),
+      title: this.title,
     });
   }
 
@@ -252,7 +268,7 @@ export class ArticleComponent implements OnInit {
       origin_document: this.searchQuery,
       modified_document: this.searchQuery,
       subscribed_feature: this.selectedFeature,
-      title: this.searchQuery.trim().split('\n')[0].slice(0, 80),
+      title: this.title,
       ...this.writingOption(),
       seed: 0,
     });

@@ -37,13 +37,31 @@ export interface BillingHistoryResponse {
 }
 
 export interface CreateDocumentResponse {
-  origin_document: string;
   id: number;
-  modified_document?: any;
+  title: string;
+  origin_document: string;
+  modified_document: string;
+  initial_document: string;
   user: number;
+  audient_type: string;
+  tone_type: string;
+  context_type: string;
+  goal_type: string;
+  english_type: string;
+  word_count: number;
+  character_count: number;
+  versions: Version[];
+  latest_version: number;
   date_created: string;
-  versions: any[];
-  latest_version?: any;
+}
+
+export interface Version {
+  modified_document: string;
+  date_created: string;
+  version: number;
+  id: number;
+  word_count: number;
+  character_count: number;
 }
 export interface ProcessDocumentResponse {
   origin_document: OriginDocument;

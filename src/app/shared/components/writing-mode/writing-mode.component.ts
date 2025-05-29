@@ -1,5 +1,9 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { ButtonComponent } from '../button/button.component';
 import { WritingService } from '../../services/writing.service';
 import {
@@ -26,6 +30,7 @@ export class WritingModeComponent implements OnInit, OnDestroy {
   selectedContext: Datum | undefined = undefined;
   selectedGoal: Datum | undefined = undefined;
   selectedEnglish: Datum | undefined = undefined;
+  data: { mode: 'edit' | 'new' } = inject(MAT_DIALOG_DATA);
 
   ngOnInit(): void {
     this.getWritingOptions();
@@ -43,7 +48,7 @@ export class WritingModeComponent implements OnInit, OnDestroy {
     };
     this.writingService.setWritingOptions(preferredOptions);
     this.dialogRef.close();
-    this.router.navigate(['/main/create-article']);
+    this.data.mode === 'new' && this.router.navigate(['/main/create-article']);
   }
 
   getWritingOptions() {

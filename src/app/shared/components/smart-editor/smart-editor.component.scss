@@ -1,0 +1,48 @@
+/* smart-editor.component.css */
+
+/*
+  Make CKEditor fill the height of its container.
+  The .ck-editor__editable class is typically what you need to target for height.
+  You might need to inspect the generated CKEditor structure to confirm class names
+  if this doesn't work perfectly with your specific CKEditor build.
+*/
+:host ::ng-deep .custom-ckeditor .ck-editor__main,
+:host ::ng-deep .custom-ckeditor .ck-editor__editable_inline,
+:host ::ng-deep .custom-ckeditor .ck-editor__editable {
+  height: 100% !important; /* Ensure it fills the parent <main> */
+  min-height: 300px; /* Or a specific minimum height */
+  border: none !important; /* Remove default CKEditor border if any */
+  box-shadow: none !important; /* Remove default CKEditor shadow if any */
+  padding: 1.5rem; /* Match the p-6 of the main container if needed for text alignment */
+}
+
+/*
+  Style the CKEditor placeholder text to match the UI.
+  This selector might vary slightly based on the CKEditor build.
+  Inspect the element if it doesn't apply.
+*/
+:host ::ng-deep .custom-ckeditor .ck-editor__editable.ck-placeholder::before {
+  color: #6b7280 !important; /* text-gray-500 or similar */
+  font-style: normal;
+}
+
+/* Ensure full height for the ng-deep ckeditor wrapper if needed */
+:host ::ng-deep .custom-ckeditor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Remove padding from the main editor area if the editable area has its own */
+:host ::ng-deep .custom-ckeditor .ck-editor__main {
+  padding: 0 !important;
+}
+
+/*
+  If the CKEditor toolbar still appears despite configuration and JS hiding,
+  you can try to hide it with more aggressive CSS.
+  This is a fallback.
+*/
+:host ::ng-deep .ck-toolbar {
+  display: none !important;
+}

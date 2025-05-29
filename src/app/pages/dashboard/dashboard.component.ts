@@ -38,6 +38,7 @@ export class DashboardComponent {
   onCreateArticle() {
     this.dialogService.openDialog(WritingModeComponent, {
       width: '640px',
+      data: { mode: 'new' },
     });
   }
 
