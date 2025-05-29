@@ -28,7 +28,7 @@
       <div class="flex gap-2 flex-wrap">
         @for (option of writingOption?.audience_types; track option.key) {
         <div>
-          <input (input)="onSelectAudience(option)" type="checkbox" [checked]="option.key === selectedAudience?.key"
+          <input (input)="onSelectAudience(option)" type="checkbox" [checked]="option.key === selectedAudience"
             [id]="option.key" class="hidden peer">
           <label [for]="option.key"
             class="font-medium text-sm px-2 py-1 text-primary border border-[2px] text-[12px] border-blue-light rounded-full cursor-pointer peer-checked:bg-primary peer-checked:text-white transition">
@@ -39,7 +39,7 @@
         </div>
         }
       </div>
-      <p class="text-[#2F2F2F] text-[14px] mt-2">{{selectedAudience?.label}}</p>
+      <!-- <p class="text-[#2F2F2F] text-[14px] mt-2">{{selectedAudience?.label}}</p> -->
     </div>
     <div class="px-4 py-2">
       <label class="text-[14px]/[20px] font-bold txt-[#52525B]">
@@ -48,7 +48,7 @@
       <div class="flex gap-2 flex-wrap">
         @for (option of writingOption?.tone_types; track option.key) {
         <div>
-          <input (input)="onSelectTone(option)" type="checkbox" [checked]="option.key === selectedTone?.key"
+          <input (input)="onSelectTone(option)" type="checkbox" [checked]="option.key === selectedTone"
             [id]="option.key" class="hidden peer">
           <label [for]="option.key"
             class="font-medium text-sm px-2 py-1 text-primary border border-[2px] text-[12px] border-blue-light rounded-full cursor-pointer peer-checked:bg-primary peer-checked:text-white transition">
@@ -59,7 +59,7 @@
         </div>
         }
       </div>
-      <p class="text-[#2F2F2F] text-[14px] mt-2">{{selectedTone?.label}}</p>
+      <!-- <p class="text-[#2F2F2F] text-[14px] mt-2">{{selectedTone?.label}}</p> -->
     </div>
     <div class="px-4 py-2">
       <label class="text-[14px]/[20px] font-bold txt-[#52525B]">
@@ -68,7 +68,7 @@
       <div class="flex gap-2 flex-wrap">
         @for (option of writingOption?.context_types; track option.key) {
         <div>
-          <input (input)="onSelectContext(option)" type="checkbox" [checked]="option.key === selectedContext?.key"
+          <input (input)="onSelectContext(option)" type="checkbox" [checked]="option.key === selectedContext"
             [id]="option.key" class="hidden peer">
           <label [for]="option.key"
             class="font-medium text-sm px-2 py-1 text-primary border border-[2px] text-[12px] border-blue-light rounded-full cursor-pointer peer-checked:bg-primary peer-checked:text-white transition">
@@ -79,7 +79,7 @@
         </div>
         }
       </div>
-      <p class="text-[#2F2F2F] text-[14px] mt-2">{{selectedContext?.label}}</p>
+      <!-- <p class="text-[#2F2F2F] text-[14px] mt-2">{{selectedContext?.label}}</p> -->
     </div>
     <div class="px-4 py-2">
       <label class="text-[14px]/[20px] font-bold txt-[#52525B]">
@@ -88,7 +88,7 @@
       <div class="flex gap-2 flex-wrap">
         @for (option of writingOption?.goal_types; track option.key) {
         <div>
-          <input (input)="onSelectGoal(option)" type="checkbox" [checked]="option.key === selectedGoal?.key"
+          <input (input)="onSelectGoal(option)" type="checkbox" [checked]="option.key === selectedGoal"
             [id]="option.key" class="hidden peer">
           <label [for]="option.key"
             class="font-medium text-sm px-2 py-1 text-primary border border-[2px] text-[12px] border-blue-light rounded-full cursor-pointer peer-checked:bg-primary peer-checked:text-white transition">
@@ -99,7 +99,7 @@
         </div>
         }
       </div>
-      <p class="text-[#2F2F2F] text-[14px] mt-2">{{selectedGoal?.label}}</p>
+      <!-- <p class="text-[#2F2F2F] text-[14px] mt-2">{{selectedGoal?.label}}</p> -->
     </div>
     <div class="px-4 py-2">
       <label class="text-[14px]/[20px] font-bold txt-[#52525B]">
@@ -108,7 +108,7 @@
       <div class="flex gap-2 flex-wrap">
         @for (option of writingOption?.english_types; track option.key) {
         <div>
-          <input (input)="onSelectEnglish(option)" type="checkbox" [checked]="option.key === selectedEnglish?.key"
+          <input (input)="onSelectEnglish(option)" type="checkbox" [checked]="option.key === selectedEnglish"
             [id]="option.key" class="hidden peer">
           <label [for]="option.key"
             class="font-medium text-sm px-2 py-1 text-primary border border-[2px] text-[12px] border-blue-light rounded-full cursor-pointer peer-checked:bg-primary peer-checked:text-white transition">
@@ -119,7 +119,7 @@
         </div>
         }
       </div>
-      <p class="text-[#2F2F2F] text-[14px] mt-2">{{selectedEnglish?.label}}</p>
+      <!-- <p class="text-[#2F2F2F] text-[14px] mt-2">{{selectedEnglish?.label}}</p> -->
     </div>
   </div>
 
@@ -129,7 +129,8 @@
     <app-button (buttonClick)="onResetDefault()"
       inputClass="!border-1 !border-primary !py-[0.5rem] !px-[4rem] !bg-white !text-primary">Reset to
       Default</app-button>
-    <app-button (click)="saveWritingOption()" inputClass="!py-[0.5rem] !px-[4rem]">Start Writing</app-button>
+    <app-button (click)="saveWritingOption()" inputClass="!py-[0.5rem] !px-[4rem]">{{data?.mode === 'new' ? 'Start' :
+      'Continue'}} Writing</app-button>
   </div>
 
 </div>

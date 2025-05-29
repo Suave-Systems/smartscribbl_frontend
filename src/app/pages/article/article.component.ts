@@ -68,11 +68,10 @@ export class ArticleComponent implements OnInit {
   ngOnInit(): void {
     this.getFeatures();
     this.checkMode();
-    // this.onSetWritingMode();
 
     const sub = this.searchQuerySubject
       .pipe(
-        debounceTime(500), // Wait 500ms after the last event.
+        debounceTime(1500), // Wait 1500ms after the last event.
         distinctUntilChanged(), // Only continue if the value has changed.
         switchMap((query: string): Observable<any> => {
           if (this.mode === 'create') {
@@ -149,6 +148,7 @@ export class ArticleComponent implements OnInit {
         this.loadingArticle.set(false);
         this.searchQuery = res.origin_document;
         this.title = res.title;
+        this.writingService.setWritingOptions(res);
         this.onProcessDocument();
         // update the UI with the article body
       },
@@ -231,6 +231,14 @@ export class ArticleComponent implements OnInit {
           correction.position.start,
           correction.position.end,
           correction.corrected_text,
+          false
+        );
+        break;
+      case 'deletion':
+        this.searchQuery = this.deleteWordAtIndex(
+          this.searchQuery,
+          correction.position.start,
+          correction.position.end,
           false
         );
         break;
@@ -332,6 +340,35 @@ export class ArticleComponent implements OnInit {
           (after.length || 0) > 10 ? after.substring(0, 10) + '...' : after
         }`
       : `${before}${newWord}${after}`;
+  }
+
+  deleteWordAtIndex(
+    text: string,
+    startIndex: number,
+    endIndex: number,
+    format = true
+  ): string {
+    if (
+      startIndex < 0 ||
+      endIndex - 1 >= text.length ||
+      startIndex >= endIndex
+    ) {
+      return text;
+    }
+
+    const deletedWord = text.slice(startIndex, endIndex);
+    const before = text.slice(0, startIndex);
+    const after = text.slice(endIndex);
+
+    return format
+      ? `${
+          before.length > 10
+            ? '...' + before.substring(before.length - 10)
+            : before
+        }<span class="line-through text-red-500">${deletedWord}</span>${
+          after.length > 10 ? after.substring(0, 10) + '...' : after
+        }`
+      : `${before}${after}`.replace(/\s+/g, ' ').trim();
   }
 
   // getUnderlinedErrors(): string {

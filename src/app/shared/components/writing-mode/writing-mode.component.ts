@@ -1,4 +1,11 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -25,12 +32,32 @@ export class WritingModeComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private dialogRef = inject(MatDialogRef<WritingModeComponent>);
   writingOption: WritingOption | undefined = undefined;
-  selectedAudience: Datum | undefined = undefined;
-  selectedTone: Datum | undefined = undefined;
-  selectedContext: Datum | undefined = undefined;
-  selectedGoal: Datum | undefined = undefined;
-  selectedEnglish: Datum | undefined = undefined;
+  selectedAudience = '';
+  selectedTone = '';
+  selectedContext = '';
+  selectedGoal = '';
+  selectedEnglish = '';
   data: { mode: 'edit' | 'new' } = inject(MAT_DIALOG_DATA);
+  private selectedWritingOption = computed(() => {
+    this.selectedAudience = this.writingService.writingOptions()
+      ?.audient_type as string;
+    this.selectedTone = this.writingService.writingOptions()
+      ?.tone_type as string;
+    this.selectedContext = this.writingService.writingOptions()
+      ?.context_type as string;
+    this.selectedGoal = this.writingService.writingOptions()
+      ?.goal_type as string;
+    this.selectedEnglish = this.writingService.writingOptions()
+      ?.english_type as string;
+
+    return this.writingService.writingOptions();
+  });
+
+  constructor() {
+    effect(() => {
+      this.selectedWritingOption();
+    });
+  }
 
   ngOnInit(): void {
     this.getWritingOptions();
@@ -40,11 +67,11 @@ export class WritingModeComponent implements OnInit, OnDestroy {
 
   saveWritingOption() {
     const preferredOptions: PreferredWritingOption = {
-      audient_type: this.selectedAudience?.key,
-      tone_type: this.selectedTone?.key,
-      context_type: this.selectedContext?.key,
-      goal_type: this.selectedGoal?.key,
-      english_type: this.selectedEnglish?.key,
+      audient_type: this.selectedAudience,
+      tone_type: this.selectedTone,
+      context_type: this.selectedContext,
+      goal_type: this.selectedGoal,
+      english_type: this.selectedEnglish,
     };
     this.writingService.setWritingOptions(preferredOptions);
     this.dialogRef.close();
@@ -55,7 +82,7 @@ export class WritingModeComponent implements OnInit, OnDestroy {
     this.writingService.getWritingOptions().subscribe({
       next: (response) => {
         this.writingOption = response.data;
-        this.onResetDefault();
+        this.data.mode === 'new' && this.onResetDefault();
       },
     });
   }
@@ -63,38 +90,38 @@ export class WritingModeComponent implements OnInit, OnDestroy {
   onResetDefault() {
     this.selectedAudience = this.writingOption?.audience_types.find(
       (audience) => audience.is_default
-    );
+    )?.key as string;
     this.selectedTone = this.writingOption?.tone_types.find(
       (tone) => tone.is_default
-    );
+    )?.key as string;
     this.selectedContext = this.writingOption?.context_types.find(
       (context) => context.is_default
-    );
+    )?.key as string;
     this.selectedGoal = this.writingOption?.goal_types.find(
       (goal) => goal.is_default
-    );
+    )?.key as string;
     this.selectedEnglish = this.writingOption?.english_types.find(
       (english) => english.is_default
-    );
+    )?.key as string;
   }
 
-  onSelectAudience(audience: Datum) {
-    this.selectedAudience = audience;
+  onSelectAudience(value: Datum) {
+    this.selectedAudience = value.key;
   }
 
-  onSelectTone(audience: Datum) {
-    this.selectedTone = audience;
+  onSelectTone(value: Datum) {
+    this.selectedTone = value.key;
   }
 
-  onSelectContext(audience: Datum) {
-    this.selectedContext = audience;
+  onSelectContext(value: Datum) {
+    this.selectedContext = value.key;
   }
 
-  onSelectGoal(audience: Datum) {
-    this.selectedGoal = audience;
+  onSelectGoal(value: Datum) {
+    this.selectedGoal = value.key;
   }
 
-  onSelectEnglish(audience: Datum) {
-    this.selectedEnglish = audience;
+  onSelectEnglish(value: Datum) {
+    this.selectedEnglish = value.key;
   }
 }
