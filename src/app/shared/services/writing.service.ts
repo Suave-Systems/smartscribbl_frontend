@@ -50,6 +50,12 @@ export class WritingService {
     );
   }
 
+  deleteArticle(id: any) {
+    return this.http.delete<DocumentResponse>(
+      `${this.baseApi}services/v1/articles/${id}/`
+    );
+  }
+
   updateArticle(payload: any) {
     return this.http.post(
       `${this.baseApi}services/v1/articles/update_article/`,

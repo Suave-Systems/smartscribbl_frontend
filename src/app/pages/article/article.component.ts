@@ -21,14 +21,25 @@ import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Correction, FeaturesResponse } from '../../models/api-responses';
-import { SmartEditorComponent } from '../../shared/components/smart-editor/smart-editor.component';
 import { DialogService } from '../../shared/services/dialog.service';
 import { WritingModeComponent } from '../../shared/components/writing-mode/writing-mode.component';
+import { QuillModule } from 'ngx-quill';
+import { InsertWordAtIndexPipe } from '../../shared/pipes/insert-word-at-index.pipe';
+import { DeleteWordAtIndexPipe } from '../../shared/pipes/delete-word-at-index.pipe';
+import { ReplaceWordAtIndicesPipe } from '../../shared/pipes/replace-word-at-indices.pipe';
 
 @Component({
   selector: 'app-article',
   standalone: true,
-  imports: [FormsModule, NgClass, ButtonComponent, SmartEditorComponent],
+  imports: [
+    FormsModule,
+    NgClass,
+    QuillModule,
+    ButtonComponent,
+    InsertWordAtIndexPipe,
+    DeleteWordAtIndexPipe,
+    ReplaceWordAtIndicesPipe,
+  ],
   templateUrl: './article.component.html',
   styleUrl: './article.component.scss',
 })
@@ -45,10 +56,14 @@ export class ArticleComponent implements OnInit {
   loadingSuggestions = signal(false);
   creatingArticle = signal(false);
   loadingArticle = signal(false);
+  currentSuggestionList = signal('');
 
   private dialogService = inject(DialogService);
   private writingService = inject(WritingService);
   private route = inject(ActivatedRoute);
+  // private insertFormat = inject(InsertWordAtIndexPipe);
+  // private replaceFormat = inject(ReplaceWordAtIndicesPipe);
+  // private deleteFormat = inject(DeleteWordAtIndexPipe);
 
   // Subject to emit search query changes.
   private searchQuerySubject: Subject<string> = new Subject<string>();
@@ -56,10 +71,22 @@ export class ArticleComponent implements OnInit {
   private subscriptions: Subscription[] = [];
   private writingOption = computed(() => this.writingService.writingOptions());
   ai_refinement = false;
-  refinedText: any = {};
+  refinedText: any = null;
   title = '';
 
-  constructor() {
+  toolbarOptions = [
+    ['bold', 'italic', 'underline'],
+    // [{ header: [1, 2, false] }],
+    [{ header: '' }, { header: 1 }, { header: 2 }],
+    ['link'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+  ];
+
+  constructor(
+    private insertFormat: InsertWordAtIndexPipe,
+    private replaceFormat: ReplaceWordAtIndicesPipe,
+    private deleteFormat: DeleteWordAtIndexPipe
+  ) {
     effect(() => {
       this.writingOption();
     });
@@ -106,6 +133,14 @@ export class ArticleComponent implements OnInit {
       this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
+  onEditorCreated(quill: any) {
+    quill.legacyGetSemanticHTML = quill.getSemanticHTML;
+    quill.getSemanticHTML = (a: number, b: number) =>
+      quill
+        .legacyGetSemanticHTML(a, b)
+        .replaceAll(/((?:&nbsp;)*)&nbsp;/g, '$1 ');
+  }
+
   onSetWritingMode() {
     this.dialogService.openDialog(WritingModeComponent, {
       width: '640px',
@@ -115,8 +150,11 @@ export class ArticleComponent implements OnInit {
     });
   }
 
-  onInputChange(query: string): void {
-    this.searchQuerySubject.next(query);
+  onInputChange(query: any): void {
+    if (!query) {
+      return;
+    }
+    this.searchQuerySubject.next(query.html);
   }
 
   getFeatures() {
@@ -173,6 +211,7 @@ export class ArticleComponent implements OnInit {
       .subscribe({
         next: (response: any) => {
           this.loadingSuggestions.set(false);
+          this.currentSuggestionList.set(this.selectedFeature);
           this.correctedText = response.data.result.data.corrected_text;
           this.suggestions = response.data.result.data.corrections;
           this.selectedCorrectionIndex = 0;
@@ -218,208 +257,62 @@ export class ArticleComponent implements OnInit {
     // this.searchQuery = value;
     switch (correction.type) {
       case 'insertion':
-        this.searchQuery = this.insertWordAtIndex(
+        this.searchQuery = this.insertFormat.transform(
           this.searchQuery,
           correction.corrected_text,
           correction.position.start,
           false
         );
+        this.onReposition();
         break;
       case 'replacement':
-        this.searchQuery = this.replaceSubstringByIndices(
+        this.searchQuery = this.replaceFormat.transform(
           this.searchQuery,
           correction.position.start,
           correction.position.end,
           correction.corrected_text,
           false
         );
+        this.onReposition();
         break;
       case 'deletion':
-        this.searchQuery = this.deleteWordAtIndex(
+        this.searchQuery = this.deleteFormat.transform(
           this.searchQuery,
           correction.position.start,
           correction.position.end,
           false
         );
+        this.onReposition();
         break;
       case 'refinement':
         this.searchQuery = this.refinedText.text;
+        this.refinedText = null;
         break;
 
       default:
         break;
     }
-
-    this.onReposition();
-  }
-
-  onSave() {
-    if (this.mode === 'create') {
-      return this.onCreateArticle();
-    }
-
-    return this.onUpdateArticle();
   }
 
   onCreateArticle() {
-    this.title = this.searchQuery.trim().split('\n')[0].slice(0, 25);
+    const title = this.title || 'Untitled Document';
     return this.writingService.createArticle({
       origin_document: this.searchQuery,
       ...this.writingOption(),
-      title: this.title,
+      title: title,
     });
   }
 
   onUpdateArticle() {
+    const title = this.title || 'Untitled Document';
     return this.writingService.updateArticle({
       document_id: this.articleId,
       origin_document: this.searchQuery,
       modified_document: this.searchQuery,
       subscribed_feature: this.selectedFeature,
-      title: this.title,
+      title: title,
       ...this.writingOption(),
       seed: 0,
     });
   }
-
-  // insertWordAtIndex(text: string, word: string, index: number): string {
-  //   const words = text.split(' ');
-  //   if (index < 0 || index > words.length) return text;
-  //   words.splice(index, 0, word);
-  //   return words.join(' ');
-  // }
-
-  insertWordAtIndex(
-    text: string,
-    word: string,
-    index: number,
-    format = true
-  ): string {
-    if (index < 0 || index > text.length) return text;
-
-    let before = text.slice(0, index).trimEnd();
-    let after = text.slice(index).trimStart();
-
-    return format
-      ? `${
-          (before.length || 0) > 10
-            ? '...' + before.substring(before.length - 10, before.length)
-            : before
-        } <span class="font-bold text-primary">${word}</span> ${
-          (after.length || 0) > 10 ? after.substring(0, 10) + '...' : after
-        }`
-          .replace(/\s+/g, ' ')
-          .trim()
-      : `${before} ${word} ${after}`.replace(/\s+/g, ' ').trim();
-  }
-
-  replaceSubstringByIndices(
-    text: string,
-    startIndex: number,
-    endIndex: number,
-    newWord: string,
-    format = true
-  ): string {
-    if (
-      startIndex < 0 ||
-      endIndex - 1 >= text.length ||
-      startIndex > endIndex
-    ) {
-      return text;
-    }
-    const oldWord = text.slice(startIndex, endIndex);
-    const before = text.slice(0, startIndex);
-    const after = text.slice(endIndex);
-    // return text.slice(0, startIndex) + newWord + text.slice(endIndex + 1);
-    return format
-      ? `${
-          (before.length || 0) > 10
-            ? '...' + before.substring(before.length - 10, before.length)
-            : before
-        }<span class="line-through text-red-500">${oldWord}</span> <span class="font-bold text-primary">${newWord}</span>${
-          (after.length || 0) > 10 ? after.substring(0, 10) + '...' : after
-        }`
-      : `${before}${newWord}${after}`;
-  }
-
-  deleteWordAtIndex(
-    text: string,
-    startIndex: number,
-    endIndex: number,
-    format = true
-  ): string {
-    if (
-      startIndex < 0 ||
-      endIndex - 1 >= text.length ||
-      startIndex >= endIndex
-    ) {
-      return text;
-    }
-
-    const deletedWord = text.slice(startIndex, endIndex);
-    const before = text.slice(0, startIndex);
-    const after = text.slice(endIndex);
-
-    return format
-      ? `${
-          before.length > 10
-            ? '...' + before.substring(before.length - 10)
-            : before
-        }<span class="line-through text-red-500">${deletedWord}</span>${
-          after.length > 10 ? after.substring(0, 10) + '...' : after
-        }`
-      : `${before}${after}`.replace(/\s+/g, ' ').trim();
-  }
-
-  // getUnderlinedErrors(): string {
-  //   let formattedText = this.originalText;
-  //   this.corrections.forEach((correction) => {
-  //     const regex = new RegExp(`\\b${correction.original_text}\\b`, 'g');
-  //     formattedText = formattedText.replace(
-  //       regex,
-  //       `<span class="underline-error">${correction.original_text}</span>`
-  //     );
-  //   });
-  //   return formattedText;
-  // }
-
-  // getHighlightedCorrections(): string {
-  //   let formattedText = this.originalText;
-  //   this.corrections.forEach((correction) => {
-  //     const regex = new RegExp(`\\b${correction.original_text}\\b`, 'g');
-  //     formattedText = formattedText.replace(
-  //       regex,
-  //       `<span class="highlight-correction">${correction.corrected_text}</span>`
-  //     );
-  //   });
-  //   return formattedText;
-  // }
-
-  // getFormattedText(): string {
-  //   let words = this.originalText.split(' ');
-
-  //   this.corrections.forEach((correction) => {
-  //     if (correction.type === 'insertion') {
-  //       words.splice(
-  //         correction.position.start, // Insert at the right index
-  //         0,
-  //         `<span class="inserted-word">${correction.corrected_text}</span>`
-  //       );
-  //     } else if (correction.type === 'deletion') {
-  //       words = words.map((word) =>
-  //         word === correction.original_text
-  //           ? `<span class="deleted-word">${word}</span>`
-  //           : word
-  //       );
-  //     } else if (correction.type === 'replacement') {
-  //       words = words.map((word) =>
-  //         word === correction.original_text
-  //           ? `<span class="highlight-correction">${correction.corrected_text}</span>`
-  //           : word
-  //       );
-  //     }
-  //   });
-
-  //   return words.join(' ');
-  // }
 }

@@ -102,3 +102,9 @@ body {
     border: none;
   }
 }
+
+.no-padding-dialog .mat-dialog-container {
+  padding: 0 !important;
+  background: transparent;
+  box-shadow: none;
+}

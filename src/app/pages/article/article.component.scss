@@ -1,0 +1,23 @@
+::ng-deep quill-editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+::ng-deep .ql-container {
+  flex: 1;
+  overflow-y: auto;
+}
+
+::ng-deep .ql-toolbar {
+  display: flex;
+  justify-content: center;
+}
+
+::ng-deep .ql-header[value=""]::before {
+  content: "p";
+}
+
+.results {
+  overflow-y: scroll;
+}

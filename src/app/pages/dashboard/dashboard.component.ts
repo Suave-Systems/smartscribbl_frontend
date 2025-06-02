@@ -8,6 +8,10 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 import { DialogService } from '../../shared/services/dialog.service';
 import { WritingModeComponent } from '../../shared/components/writing-mode/writing-mode.component';
 import { DatePipe } from '@angular/common';
+import {
+  DeleteDialogComponent,
+  DeleteDialogData,
+} from '../../shared/components/delete-dialog/delete-dialog.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -56,5 +60,31 @@ export class DashboardComponent {
     });
 
     this.subscriptions.push(sub);
+  }
+
+  onDeleteArticle(article: any) {
+    const data: DeleteDialogData = {
+      title: 'Delete Article',
+      message: 'Are you sure you want to delete this article permanently?',
+      confirmText: 'Delete',
+      cancelText: 'Keep',
+    };
+
+    this.dialogService
+      .openDialog(DeleteDialogComponent, {
+        data,
+        panelClass: 'no-padding-dialog',
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (!result) {
+          return;
+        }
+        this.writingService.deleteArticle(article.id).subscribe({
+          next: () => {
+            this.getArticles();
+          },
+        });
+      });
   }
 }

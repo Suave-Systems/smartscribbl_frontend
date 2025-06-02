@@ -1,30 +1,22 @@
 <div class="flex gap-x-2 h-full w-full ">
-  <div class="flex-grow">
-    <!-- <div class="h-full w-full">
-      @if (searchQuery === '') {
-      <p class="text-gray-300">
-        Type or Paste (Ctrl + V) your text here
-      </p>
-      }
-      <div class="align-top h-full w-full placeholder-top" contenteditable="true"
-        [attr.placeholder]="'Type or Paste (Ctrl + V) your text here'" (input)="onInputChange($event)"
-        [innerText]="searchQuery">
-      </div>
-    </div> -->
-
+  <div class="flex-grow h-full flex flex-col">
     <div class="flex items-center justify-between w-full mb-3">
       <input class="placeholder:text-gray-400 px-4 text-[14px] font-bold focus:outline-none focus:ring-0" type="text"
         placeholder="Untitled Document" [(ngModel)]="title">
-      <!-- <p [ngClass]="{'text-gray-300 font-light': !title}" class="">{{title || 'Untitled Document'}}</p> -->
       <app-button (buttonClick)="onSetWritingMode()" [inputClass]="'!bg-transparent !text-primary !text-light !p-0'">Set
         Writing Mode</app-button>
     </div>
 
-    <textarea [(ngModel)]="searchQuery" (ngModelChange)="onInputChange($event)"
-      class="align-top h-full w-full placeholder-top align-top" placeholder="Type or Paste (Ctrl + V) your text here"
-      type="text"></textarea>
-    <!-- <app-smart-editor></app-smart-editor> -->
+    <quill-editor (onEditorCreated)="onEditorCreated($event)" [format]="'html'" class="h-full"
+      style="display: flex; flex-direction: column;" [(ngModel)]="searchQuery"
+      [placeholder]="'Type or Paste (Ctrl + V) your text here'" [modules]="{ toolbar: toolbarOptions }"
+      (onContentChanged)="onInputChange($event)">
+    </quill-editor>
+    <!-- <textarea [(ngModel)]="searchQuery" (ngModelChange)="onInputChange($event)"
+      class="align-top h-full w-full placeholder-top align-top"
+      placeholder="Type or Paste (Ctrl + V) your text here" type="text"></textarea> -->
   </div>
+
   <div class="border-l-1 px-2 border-gray-300 w-1/3">
     <p class="bg-[#F6F6F6] p-2 text-primary">
       AI Assistant
@@ -36,7 +28,8 @@
         class="relative text-[12px] text-[#414651] mx-2 py-1 text-nowrap focus:outline-none"
         [ngClass]="{'border-b-2 border-primary ': feature.feature == selectedFeature}">
         {{feature?.name}}
-        @if (suggestions && suggestions.length > 0 && feature.feature == selectedFeature) {
+        @if (suggestions && suggestions.length > 0 && feature.feature == selectedFeature && selectedFeature ==
+        currentSuggestionList()) {
         <span
           class="absolute -top-1 -right-2 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full">
 
@@ -56,16 +49,16 @@
 
 
     @if (!ai_refinement && suggestions && suggestions.length > 0) {
-    <div class="results">
+    <div class="results overflow-y-scroll">
       <ul class="max-w-md mx-auto divide-y divide-gray-200 border border-gray-300 rounded-md">
         @for (result of suggestions; track $index) {
         <li (click)="selectedCorrectionIndex = $index" [ngClass]="{'bg-blue-50': selectedCorrectionIndex == $index}"
-          class="px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
-          <p class="text-[10px]">Type: {{result?.type}}</p>
+          class="text-wrap px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
+          <span class="text-[10px]">Type: {{result?.type}}</span>
           @if (result.type === 'insertion') {
           @if (selectedCorrectionIndex == $index) {
-          <p class="text-[14px]"
-            [innerHTML]="insertWordAtIndex(searchQuery, result.corrected_text, result.position.start)"></p>
+          <div class="text-holder text-[14px] text-wrap"
+            [innerHTML]="searchQuery | insertWordAtIndex: result.corrected_text: result.position.start"></div>
           }
           <span class="py-2">
             {{result?.corrected_text}}
@@ -73,9 +66,9 @@
           }
           @if (result.type === 'deletion') {
           @if (selectedCorrectionIndex == $index) {
-          <p class="text-[14px]"
-            [innerHTML]="deleteWordAtIndex(searchQuery, result.position.start, result.position.end)">
-          </p>
+          <div class="text-holder text-[14px] text-wrap"
+            [innerHTML]="searchQuery | deleteWordAtIndex : result.position.start: result.position.end">
+          </div>
           }
           <span class="py-2">
             {{result?.original_text}}
@@ -83,16 +76,16 @@
           }
           @if (result.type === 'replacement') {
           @if (selectedCorrectionIndex == $index) {
-          <p class="text-[14px]"
-            [innerHTML]="replaceSubstringByIndices(searchQuery, result.position.start, result.position.end, result.corrected_text)">
-          </p>
+          <div class="text-holder text-[14px] text-wrap"
+            [innerHTML]="searchQuery | replaceWordAtIndices : result.position.start: result.position.end: result.corrected_text">
+          </div>
           }
           <span class="py-2">
             {{result?.original_text}}
           </span>
           }
           @if (selectedCorrectionIndex == $index) {
-          <app-button (click)="onAcceptChange(result)" inputClass="!px-2 !py-1">Accept</app-button>
+          <app-button (buttonClick)="onAcceptChange(result)" inputClass="!px-2 !py-1">Accept</app-button>
           }
         </li>
         }
@@ -100,13 +93,13 @@
     </div>
     }
 
-    @if (ai_refinement) {
+    @if (ai_refinement && refinedText) {
     <div class="results">
       <ul class="max-w-md mx-auto divide-y divide-gray-200 border border-gray-300 rounded-md">
         <li class="bg-blue-50 px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
           <p class="text-[10px]">Type: Refinement</p>
           <p class="text-[14px]" [innerHTML]="refinedText.text"></p>
-          <app-button (click)="onAcceptChange(refinedText)" inputClass="!px-2 !py-1">Accept</app-button>
+          <app-button (buttonClick)="onAcceptChange(refinedText)" inputClass="!px-2 !py-1">Accept</app-button>
         </li>
       </ul>
     </div>
