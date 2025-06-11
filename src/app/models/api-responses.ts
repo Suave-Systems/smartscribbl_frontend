@@ -115,6 +115,7 @@ export interface BalanceResponse {
 export interface RepositionWordRequest {
   partially_corrected_word: string;
   fully_corrected_word: string;
+  corrections: Correction[];
 }
 
 export interface CreateDocumentRequest {

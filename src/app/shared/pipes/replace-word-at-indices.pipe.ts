@@ -10,12 +10,8 @@ export class ReplaceWordAtIndicesPipe implements PipeTransform {
     newWord: string,
     format = true
   ): string {
-    console.log(endIndex);
-    console.log(text.length);
-
     // || endIndex - 1 >= text.length
     if (startIndex < 0 || startIndex > endIndex) {
-      console.log('I am here');
       return text;
     }
 

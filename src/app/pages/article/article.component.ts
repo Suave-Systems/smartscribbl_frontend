@@ -154,6 +154,7 @@ export class ArticleComponent implements OnInit {
     if (!query) {
       return;
     }
+    this.searchQuery = query.html;
     this.searchQuerySubject.next(query.html);
   }
 
@@ -238,6 +239,7 @@ export class ArticleComponent implements OnInit {
       .repositionWord({
         partially_corrected_word: this.searchQuery,
         fully_corrected_word: this.correctedText,
+        corrections: this.suggestions,
       })
       .subscribe({
         next: (response: any) => {
@@ -306,12 +308,12 @@ export class ArticleComponent implements OnInit {
   onUpdateArticle() {
     const title = this.title || 'Untitled Document';
     return this.writingService.updateArticle({
+      ...this.writingOption(),
       document_id: this.articleId,
       origin_document: this.searchQuery,
       modified_document: this.searchQuery,
       subscribed_feature: this.selectedFeature,
       title: title,
-      ...this.writingOption(),
       seed: 0,
     });
   }

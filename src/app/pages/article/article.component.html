@@ -60,9 +60,9 @@
           <div class="text-holder text-[14px] text-wrap"
             [innerHTML]="searchQuery | insertWordAtIndex: result.corrected_text: result.position.start"></div>
           }
-          <span class="py-2">
-            {{result?.corrected_text}}
-          </span>
+          <div [innerHTML]="result?.corrected_text" class="py-2">
+
+          </div>
           }
           @if (result.type === 'deletion') {
           @if (selectedCorrectionIndex == $index) {
@@ -70,9 +70,9 @@
             [innerHTML]="searchQuery | deleteWordAtIndex : result.position.start: result.position.end">
           </div>
           }
-          <span class="py-2">
-            {{result?.original_text}}
-          </span>
+          <div [innerHTML]="result?.original_text" class="py-2">
+
+          </div>
           }
           @if (result.type === 'replacement') {
           @if (selectedCorrectionIndex == $index) {
@@ -80,9 +80,8 @@
             [innerHTML]="searchQuery | replaceWordAtIndices : result.position.start: result.position.end: result.corrected_text">
           </div>
           }
-          <span class="py-2">
-            {{result?.original_text}}
-          </span>
+          <div [innerHTML]="result?.original_text" class="py-2">
+          </div>
           }
           @if (selectedCorrectionIndex == $index) {
           <app-button (buttonClick)="onAcceptChange(result)" inputClass="!px-2 !py-1">Accept</app-button>

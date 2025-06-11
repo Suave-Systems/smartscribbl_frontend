@@ -34,8 +34,6 @@ export class FundWalletDialogComponent {
           status: string;
           authorization_url: string;
         }) => {
-          console.log(res);
-
           // todo: redirect the user to authorization_url
           window.location.href = res?.authorization_url;
         },
