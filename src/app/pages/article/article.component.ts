@@ -257,7 +257,7 @@ export class ArticleComponent implements OnInit {
       .subscribe({
         next: (response: any) => {
           this.loadingSuggestions.set(false);
-          this.suggestions = response.data;
+          this.suggestions = response.data.corrections;
           this.selectedCorrectionIndex = 0;
         },
         error: () => {
