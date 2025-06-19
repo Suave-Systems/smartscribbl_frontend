@@ -64,8 +64,8 @@ export class ArticleComponent implements OnInit {
 
   // Subject to emit search query changes.
   private searchQuerySubject: Subject<string> = new Subject<string>();
-
   private subscriptions: Subscription[] = [];
+  private inactivityTimer: any;
   private writingOption = computed(() => this.writingService.writingOptions());
   ai_refinement = false;
   refinedText: any = null;
@@ -124,6 +124,7 @@ export class ArticleComponent implements OnInit {
   }
 
   ngOnDestroy() {
+    if (this.inactivityTimer) clearTimeout(this.inactivityTimer);
     this.onUpdateArticle().subscribe();
     this.subscriptions.length > 0 &&
       this.subscriptions.forEach((sub) => sub.unsubscribe());
@@ -136,6 +137,18 @@ export class ArticleComponent implements OnInit {
   //       .legacyGetSemanticHTML(a, b)
   //       .replaceAll(/((?:&nbsp;)*)&nbsp;/g, '$1 ');
   // }
+
+  private resetInactivityTimer(): void {
+    if (this.inactivityTimer) {
+      clearTimeout(this.inactivityTimer);
+    }
+
+    this.inactivityTimer = setTimeout(() => {
+      if (this.articleId) {
+        this.onUpdateArticle().subscribe();
+      }
+    }, 10000); // 10 seconds
+  }
 
   onSetWritingMode() {
     this.dialogService.openDialog(WritingModeComponent, {
@@ -152,6 +165,7 @@ export class ArticleComponent implements OnInit {
     }
     this.searchQuery = query;
     this.searchQuerySubject.next(query);
+    this.resetInactivityTimer();
   }
 
   getFeatures() {
