@@ -74,15 +74,15 @@ export const routes: Routes = [
           ),
         // canActivate: [authGuard],
       },
+      // {
+      //   path: 'subscription',
+      //   loadComponent: () =>
+      //     import('./pages/subscriptions/subscriptions.component').then(
+      //       (m) => m.SubscriptionsComponent
+      //     ),
+      // },
       {
         path: 'subscription',
-        loadComponent: () =>
-          import('./pages/subscriptions/subscriptions.component').then(
-            (m) => m.SubscriptionsComponent
-          ),
-      },
-      {
-        path: 'subscription/billing-history',
         loadComponent: () =>
           import(
             './pages/subscriptions/billing-history/billing-history.component'

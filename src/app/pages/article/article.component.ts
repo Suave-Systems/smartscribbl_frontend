@@ -76,7 +76,6 @@ export class ArticleComponent implements OnInit {
 
   toolbarOptions = [
     ['bold', 'italic', 'underline'],
-    // [{ header: [1, 2, false] }],
     [{ header: '' }, { header: 1 }, { header: 2 }],
     ['link'],
     [{ list: 'ordered' }, { list: 'bullet' }],
@@ -101,6 +100,8 @@ export class ArticleComponent implements OnInit {
         debounceTime(1500), // Wait 1500ms after the last event.
         distinctUntilChanged(), // Only continue if the value has changed.
         switchMap((query: string): Observable<any> => {
+          console.log(query);
+
           if (this.mode === 'create') {
             this.creatingArticle.set(true);
             return this.onCreateArticle();
@@ -115,7 +116,8 @@ export class ArticleComponent implements OnInit {
           this.creatingArticle.set(false);
           this.errorMessage = '';
           this.mode = 'edit';
-          this.articleId = data.data.id || data.data.document_id;
+          if (data) this.articleId = data?.data?.id || data?.document_id;
+          // data?.origin_document?.id;
         },
         error: (err) => {
           this.creatingArticle.set(false);
@@ -133,7 +135,13 @@ export class ArticleComponent implements OnInit {
       this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
+  logContent(event: any) {
+    console.log(event);
+  }
+
   onEditorCreated(quill: any) {
+    console.log(quill.editor, quill.html);
+
     quill.legacyGetSemanticHTML = quill.getSemanticHTML;
     quill.getSemanticHTML = (a: number, b: number) =>
       quill
@@ -188,7 +196,7 @@ export class ArticleComponent implements OnInit {
         this.searchQuery = res.origin_document;
         this.title = res.title;
         this.writingService.setWritingOptions(res);
-        this.onProcessDocument();
+        // this.onProcessDocument();
         // update the UI with the article body
       },
       error: () => {
@@ -215,6 +223,10 @@ export class ArticleComponent implements OnInit {
           this.currentSuggestionList.set(this.selectedFeature);
           this.correctedText = response.data.result.data.corrected_text;
           this.suggestions = response.data.result.data.corrections;
+          this.searchQuery = response.data.result.data.original_text;
+          console.log(this.searchQuery);
+
+          // populate the text area with the corrected text[response.data.result.original_text];
           this.selectedCorrectionIndex = 0;
           if (this.selectedFeature === 'AI_REFINEMENT') {
             this.ai_refinement = true;

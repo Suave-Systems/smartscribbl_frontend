@@ -2,17 +2,18 @@
   <div class="flex justify-between">
 
     <app-page-title>
-      <p page-title>Billing history</p>
+      <p page-title>Subscriptions</p>
       <p page-description>
         {{(currentPlan()?.number_of_months === 1 && 'Monthly') || ((currentPlan()?.number_of_months === 12) &&
         'Yearly')}}
         plan renewable on {{currentPlan()?.next_billing_date | date : 'longDate'}} for N0</p>
     </app-page-title>
 
-    <app-button (buttonClick)="onCancelSubscription()"
-      [inputClass]="'!text-[#F66E6E] !bg-[#FEE8E8] !border-[#F66E6E] !border-1 !py-[0.5rem]'">
-      Cancel Subscription
-    </app-button>
+    <div class="flex flex-col items-center gap-2">
+      <app-button [matMenuTriggerFor]="subscriptionMenu">
+        Manage Subscription
+      </app-button>
+    </div>
 
   </div>
 
@@ -21,19 +22,27 @@
     <table class="w-full bg-white divide-y divide-[#EEEFF2]">
       <thead>
         <tr class="text-[#1F2937] text-left text-[12px]/[18px] font-semibold">
-          <th class="px-4 py-2">Plan Type</th>
           <th class="px-4 py-2">Amount(N)</th>
+          <th class="px-4 py-2">Duration of Subscription</th>
           <th class="px-4 py-2">Date of Subscription</th>
           <th class="px-4 py-2">Expiry Date</th>
+          <th class="px-4 py-2">Status</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-[#EEEFF2]">
         @for (billingHistory of billingHistoryList(); track billingHistory.id) {
         <tr class="text-[#535352] text-[12px]/[18px]">
-          <td class="px-4 py-2">{{billingHistory?.plan_name}}</td>
-          <td class="px-4 py-2 text-[#F66E6E]">-{{20000}}</td>
+          <td class="px-4 py-2 text-[#F66E6E] font-semibold">{{billingHistory.amount | currency : 'NGN' : '₦':
+            '1.0-0'}} </td>
+          <td class="px-4 py-2">{{billingHistory?.plan_type}}</td>
           <td class="px-4 py-2">{{billingHistory?.date_created | date : 'longDate' }}</td>
           <td class="px-4 py-2">{{billingHistory?.next_billing_date | date: 'longDate'}}</td>
+          <td class="px-4 py-2">
+            <span class="rounded-md py-2 px-4"
+              [ngClass]="{'text-[#007F55] bg-[#E6F2EE]': billingHistory.status === 'ACTIVE', 'text-[#F66E6E] bg-[#FEE8E8]': billingHistory.status !== 'ACTIVE'}">
+              {{billingHistory?.status }}
+            </span>
+          </td>
         </tr>
         }
         <!-- <tr class="text-[#535352] text-[12px]/[18px]">
@@ -62,3 +71,18 @@
     }
   </div>
 </div>
+
+
+<mat-menu #subscriptionMenu="matMenu">
+  <div class="flex flex-col gap-2 p-2">
+    <app-button (buttonClick)="onOpenPlansDialog()"
+      inputClass="!text-primary !bg-white !border-primary !border-1 !py-2 !w-full">
+      Subscribe to a Plan
+    </app-button>
+
+    <app-button (buttonClick)="onCancelSubscription()"
+      [inputClass]="'!text-[#F66E6E] !bg-[#FEE8E8] !border-[#F66E6E] !border-1 !py-2 !w-full'">
+      Cancel subscription
+    </app-button>
+  </div>
+</mat-menu>

@@ -7,8 +7,8 @@
         Writing Mode</app-button>
     </div>
 
-    <quill-editor (onEditorCreated)="onEditorCreated($event)" [format]="'html'" class="h-full"
-      style="display: flex; flex-direction: column;" [(ngModel)]="searchQuery"
+    <quill-editor (onContentChanged)="logContent($event)" (onEditorCreated)="onEditorCreated($event)" [format]="'html'"
+      class="h-full" style="display: flex; flex-direction: column;" [(ngModel)]="searchQuery"
       [placeholder]="'Type or Paste (Ctrl + V) your text here'" [modules]="{ toolbar: toolbarOptions }"
       (onContentChanged)="onInputChange($event)">
     </quill-editor>

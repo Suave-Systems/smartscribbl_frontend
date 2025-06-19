@@ -5,6 +5,7 @@ import {
   ApiResponses,
   BillingHistoryResponse,
   PaginatedResponse,
+  Plan,
 } from '../../models/api-responses';
 
 @Injectable({
@@ -35,7 +36,7 @@ export class SubscriptionService {
   }
 
   getPlanList() {
-    return this.http.get(`${this.baseUrl}subscriptions/v1/plan/`);
+    return this.http.get<Plan[]>(`${this.baseUrl}subscriptions/v1/plan/`);
   }
 
   getPlanById(id: string) {

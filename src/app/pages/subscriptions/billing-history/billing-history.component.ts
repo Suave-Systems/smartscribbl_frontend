@@ -7,25 +7,38 @@ import { NotificationService } from '../../../shared/services/notification.servi
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { PaymentService } from '../../../shared/services/payment.service';
 import { BillingHistoryResponse } from '../../../models/api-responses';
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { DialogService } from '../../../shared/services/dialog.service';
+import { PlanListComponent } from '../../../shared/components/plan-list/plan-list.component';
 
 @Component({
   selector: 'app-billing-history',
   standalone: true,
-  imports: [PageTitleComponent, ButtonComponent, DatePipe, EmptyStateComponent],
+  imports: [
+    PageTitleComponent,
+    ButtonComponent,
+    EmptyStateComponent,
+    NgClass,
+    MatMenuModule,
+    DatePipe,
+    CurrencyPipe,
+  ],
   templateUrl: './billing-history.component.html',
   styleUrl: './billing-history.component.scss',
 })
 export class BillingHistoryComponent implements OnInit, OnDestroy {
   private subscriptionService = inject(SubscriptionService);
   private paymentService = inject(PaymentService);
+  private dialogService = inject(DialogService);
   private notify = inject(NotificationService);
   private route = inject(ActivatedRoute);
 
   isLoading = signal(false);
   billingHistoryList = signal<BillingHistoryResponse[]>([]);
   currentPlan = signal<BillingHistoryResponse | null | undefined>(null);
+  planList = signal<any[]>([]);
 
   private subscriptions: Subscription[] = [];
 
@@ -97,5 +110,9 @@ export class BillingHistoryComponent implements OnInit, OnDestroy {
         });
       this.subscriptions.push(sub);
     }
+  }
+
+  onOpenPlansDialog() {
+    this.dialogService.openDialog(PlanListComponent, {});
   }
 }

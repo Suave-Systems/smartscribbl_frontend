@@ -24,28 +24,30 @@ export class AuthService {
   private cookieService = inject(CookiesService);
   private toastr = inject(NotificationService);
   private signupSubject = new Subject<any>();
+  private loginSubject = new Subject<any>();
   private verifyEmailSubject = new Subject<any>();
   private isAuthenticated = new BehaviorSubject<boolean>(this.hasToken());
 
   login(payload: LoginRequest) {
-    const responseSubject = new Subject<any>();
+    // const responseSubject = new Subject<any>();
     this.http
       .post<LoginResponse>(`${this.baseUrl}auth/v1/login`, payload)
       .subscribe({
         next: (res) => {
           this.toastr.success(res.message, 'SUCCESS');
-          this.router.navigate(['/auth/otp'], {
-            queryParams: { mode: 'login' },
-          });
-          responseSubject.complete();
+          // this.router.navigate(['/auth/otp'], {
+          //   queryParams: { mode: 'login' },
+          // });
+          this.handleToken(res);
+          this.loginSubject.complete();
         },
         error: (err) => {
-          responseSubject.error(err);
+          this.loginSubject.error(err);
           this.toastr.error(err.error.message, 'Error');
         },
       });
 
-    return responseSubject.asObservable();
+    return this.loginSubject.asObservable();
   }
 
   verifyLogin(payload: verifyEmailRequest) {
@@ -73,12 +75,12 @@ export class AuthService {
         this.cookieService.set('refreshToken', res.token.refresh);
         const decodedToken: any = jwtDecode(res.token.access);
         this.cookieService.set('userId', decodedToken.user_id);
-        this.verifyEmailSubject.next(res);
-        this.verifyEmailSubject.complete();
+        this.loginSubject.next(res);
+        this.loginSubject.complete();
         // this.router.navigate(['/main/dashboard']);
       }
     } else {
-      this.verifyEmailSubject.error(res);
+      this.loginSubject.error(res);
       const message: string = res.message || 'An Unknown error Occurred';
       this.toastr.error(message, 'Error');
     }

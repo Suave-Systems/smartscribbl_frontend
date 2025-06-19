@@ -24,12 +24,13 @@ export interface TransactionHistoryResponse {
 
 export interface BillingHistoryResponse {
   id: number;
-  plan_name: string;
+  amount: number;
+  plan_type: string;
   is_active: boolean;
   archived?: any;
   last_modified: string;
   date_created: string;
-  status: string;
+  status: string | 'ACTIVE';
   number_of_months: number;
   next_billing_date: string;
   user: number;
@@ -154,4 +155,17 @@ export interface Datum {
   key: string;
   label: string;
   is_default: boolean;
+}
+
+export interface Plan {
+  id: number;
+  archived?: any;
+  last_modified: string;
+  date_created: string;
+  type: string;
+  price: string;
+  discounted_price: string;
+  description?: any;
+  features: any[];
+  is_active: boolean;
 }
