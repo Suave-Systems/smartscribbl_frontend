@@ -61,9 +61,6 @@ export class ArticleComponent implements OnInit {
   private dialogService = inject(DialogService);
   private writingService = inject(WritingService);
   private route = inject(ActivatedRoute);
-  // private insertFormat = inject(InsertWordAtIndexPipe);
-  // private replaceFormat = inject(ReplaceWordAtIndicesPipe);
-  // private deleteFormat = inject(DeleteWordAtIndexPipe);
 
   // Subject to emit search query changes.
   private searchQuerySubject: Subject<string> = new Subject<string>();
@@ -100,8 +97,6 @@ export class ArticleComponent implements OnInit {
         debounceTime(1500), // Wait 1500ms after the last event.
         distinctUntilChanged(), // Only continue if the value has changed.
         switchMap((query: string): Observable<any> => {
-          console.log(query);
-
           if (this.mode === 'create') {
             this.creatingArticle.set(true);
             return this.onCreateArticle();
@@ -116,8 +111,7 @@ export class ArticleComponent implements OnInit {
           this.creatingArticle.set(false);
           this.errorMessage = '';
           this.mode = 'edit';
-          if (data) this.articleId = data?.data?.id || data?.document_id;
-          // data?.origin_document?.id;
+          if (!this.articleId) this.articleId = data?.data?.id;
         },
         error: (err) => {
           this.creatingArticle.set(false);
@@ -135,19 +129,13 @@ export class ArticleComponent implements OnInit {
       this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
-  logContent(event: any) {
-    console.log(event);
-  }
-
-  onEditorCreated(quill: any) {
-    console.log(quill.editor, quill.html);
-
-    quill.legacyGetSemanticHTML = quill.getSemanticHTML;
-    quill.getSemanticHTML = (a: number, b: number) =>
-      quill
-        .legacyGetSemanticHTML(a, b)
-        .replaceAll(/((?:&nbsp;)*)&nbsp;/g, '$1 ');
-  }
+  // onEditorCreated(quill: any) {
+  //   quill.legacyGetSemanticHTML = quill.getSemanticHTML;
+  //   quill.getSemanticHTML = (a: number, b: number) =>
+  //     quill
+  //       .legacyGetSemanticHTML(a, b)
+  //       .replaceAll(/((?:&nbsp;)*)&nbsp;/g, '$1 ');
+  // }
 
   onSetWritingMode() {
     this.dialogService.openDialog(WritingModeComponent, {
@@ -162,8 +150,8 @@ export class ArticleComponent implements OnInit {
     if (!query) {
       return;
     }
-    this.searchQuery = query.html;
-    this.searchQuerySubject.next(query.html);
+    this.searchQuery = query;
+    this.searchQuerySubject.next(query);
   }
 
   getFeatures() {
@@ -224,7 +212,6 @@ export class ArticleComponent implements OnInit {
           this.correctedText = response.data.result.data.corrected_text;
           this.suggestions = response.data.result.data.corrections;
           this.searchQuery = response.data.result.data.original_text;
-          console.log(this.searchQuery);
 
           // populate the text area with the corrected text[response.data.result.original_text];
           this.selectedCorrectionIndex = 0;

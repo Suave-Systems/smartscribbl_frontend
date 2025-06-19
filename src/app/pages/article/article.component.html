@@ -7,14 +7,14 @@
         Writing Mode</app-button>
     </div>
 
-    <quill-editor (onContentChanged)="logContent($event)" (onEditorCreated)="onEditorCreated($event)" [format]="'html'"
+    <!-- <quill-editor (onContentChanged)="logContent($event)" (onEditorCreated)="onEditorCreated($event)" [format]="'html'"
       class="h-full" style="display: flex; flex-direction: column;" [(ngModel)]="searchQuery"
       [placeholder]="'Type or Paste (Ctrl + V) your text here'" [modules]="{ toolbar: toolbarOptions }"
       (onContentChanged)="onInputChange($event)">
-    </quill-editor>
-    <!-- <textarea [(ngModel)]="searchQuery" (ngModelChange)="onInputChange($event)"
-      class="align-top h-full w-full placeholder-top align-top"
-      placeholder="Type or Paste (Ctrl + V) your text here" type="text"></textarea> -->
+    </quill-editor> -->
+    <textarea [(ngModel)]="searchQuery" (ngModelChange)="onInputChange($event)"
+      class="align-top h-full w-full placeholder-top align-top" placeholder="Type or Paste (Ctrl + V) your text here"
+      type="text"></textarea>
   </div>
 
   <div class="border-l-1 px-2 border-gray-300 w-1/3">
