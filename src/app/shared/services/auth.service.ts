@@ -74,6 +74,10 @@ export class AuthService {
         );
         this.cookieService.set('refreshToken', res.token.refresh);
         const decodedToken: any = jwtDecode(res.token.access);
+        this.cookieService.set(
+          'subscription',
+          JSON.stringify(res.has_active_subscription)
+        );
         this.cookieService.set('userId', decodedToken.user_id);
         this.loginSubject.next(res);
         this.loginSubject.complete();

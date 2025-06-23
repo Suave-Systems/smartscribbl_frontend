@@ -27,6 +27,8 @@ import { QuillModule } from 'ngx-quill';
 import { InsertWordAtIndexPipe } from '../../shared/pipes/insert-word-at-index.pipe';
 import { DeleteWordAtIndexPipe } from '../../shared/pipes/delete-word-at-index.pipe';
 import { ReplaceWordAtIndicesPipe } from '../../shared/pipes/replace-word-at-indices.pipe';
+import { CookiesService } from '../../shared/services/cookies.service';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
   selector: 'app-article',
@@ -57,9 +59,11 @@ export class ArticleComponent implements OnInit {
   creatingArticle = signal(false);
   loadingArticle = signal(false);
   currentSuggestionList = signal('');
+  private activeSubscription = signal<boolean>(false);
 
   private dialogService = inject(DialogService);
   private writingService = inject(WritingService);
+  private notify = inject(NotificationService);
   private route = inject(ActivatedRoute);
 
   // Subject to emit search query changes.
@@ -81,8 +85,12 @@ export class ArticleComponent implements OnInit {
   constructor(
     private insertFormat: InsertWordAtIndexPipe,
     private replaceFormat: ReplaceWordAtIndicesPipe,
-    private deleteFormat: DeleteWordAtIndexPipe
+    private deleteFormat: DeleteWordAtIndexPipe,
+    private cookieService: CookiesService
   ) {
+    this.activeSubscription.set(
+      JSON.parse(this.cookieService.get('subscription')) as boolean
+    );
     effect(() => {
       this.writingOption();
     });
@@ -210,7 +218,18 @@ export class ArticleComponent implements OnInit {
     this.subscriptions.push(sub);
   }
 
+  handleNoSubscription() {
+    this.notify.error(
+      'You need an active subscription to use this feature. Please subscribe to continue.',
+      'Subscription Required'
+    );
+  }
+
   onProcessDocument() {
+    if (!this.activeSubscription()) {
+      this.handleNoSubscription();
+      return;
+    }
     this.ai_refinement = false;
     this.loadingSuggestions.set(true);
     this.writingService
@@ -247,6 +266,10 @@ export class ArticleComponent implements OnInit {
   }
 
   onReposition() {
+    if (!this.activeSubscription()) {
+      this.handleNoSubscription();
+      return;
+    }
     this.loadingSuggestions.set(true);
     this.writingService
       .repositionWord({
@@ -310,6 +333,10 @@ export class ArticleComponent implements OnInit {
   }
 
   onCreateArticle() {
+    if (!this.activeSubscription()) {
+      this.handleNoSubscription();
+      return of(null);
+    }
     const title = this.title || 'Untitled Document';
     return this.writingService.createArticle({
       origin_document: this.searchQuery,
@@ -318,7 +345,11 @@ export class ArticleComponent implements OnInit {
     });
   }
 
-  onUpdateArticle() {
+  onUpdateArticle(): Observable<any> {
+    if (!this.activeSubscription()) {
+      // this.handleNoSubscription();
+      return of(null);
+    }
     const title = this.title || 'Untitled Document';
     return this.writingService.updateArticle({
       ...this.writingOption(),

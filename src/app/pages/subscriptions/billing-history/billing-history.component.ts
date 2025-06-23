@@ -12,6 +12,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
 import { MatMenuModule } from '@angular/material/menu';
 import { DialogService } from '../../../shared/services/dialog.service';
 import { PlanListComponent } from '../../../shared/components/plan-list/plan-list.component';
+import { CookiesService } from '../../../shared/services/cookies.service';
 
 @Component({
   selector: 'app-billing-history',
@@ -32,6 +33,7 @@ export class BillingHistoryComponent implements OnInit, OnDestroy {
   private subscriptionService = inject(SubscriptionService);
   private paymentService = inject(PaymentService);
   private dialogService = inject(DialogService);
+  private cookieService = inject(CookiesService);
   private notify = inject(NotificationService);
   private route = inject(ActivatedRoute);
 
@@ -43,7 +45,6 @@ export class BillingHistoryComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   ngOnInit() {
-    this.getCurrentPlan();
     this.route.queryParamMap.subscribe((params: ParamMap) => {
       if (params && params.has('reference')) {
         const txRef = params.get('reference') as string;
@@ -58,8 +59,16 @@ export class BillingHistoryComponent implements OnInit, OnDestroy {
         });
         return;
       }
+
+      if (params && params.has('planList')) {
+        const planList = params.get('planList');
+        if (planList) {
+          this.onOpenPlansDialog();
+        }
+      }
       this.getBillingHistoryList();
     });
+    // this.getCurrentPlan();
   }
 
   ngOnDestroy() {
@@ -73,10 +82,12 @@ export class BillingHistoryComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.isLoading.set(false);
         this.billingHistoryList.set(res.results);
+        this.getCurrentPlan();
       },
       error: () => {
         this.isLoading.set(false);
         this.billingHistoryList.set([]);
+        this.getCurrentPlan();
       },
     });
 
@@ -87,6 +98,11 @@ export class BillingHistoryComponent implements OnInit, OnDestroy {
     const sub = this.subscriptionService.getCurrentPlan().subscribe({
       next: (res) => {
         this.currentPlan.set(res.data);
+        this.cookieService.set('subscription', JSON.stringify(true));
+      },
+      error: () => {
+        this.currentPlan.set(null);
+        this.cookieService.set('subscription', JSON.stringify(false));
       },
     });
     this.subscriptions.push(sub);
@@ -100,7 +116,8 @@ export class BillingHistoryComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (res: any) => {
             // notify user of successful sub and refresh list
-            this.getCurrentPlan();
+            // this.getCurrentPlan();
+            this.getBillingHistoryList();
             this.notify.success(res?.message);
           },
           error: (err) => {
@@ -109,6 +126,8 @@ export class BillingHistoryComponent implements OnInit, OnDestroy {
           },
         });
       this.subscriptions.push(sub);
+    } else {
+      this.notify.error('No active subscription found to cancel.');
     }
   }
 
