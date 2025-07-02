@@ -171,8 +171,8 @@ export class ArticleHtmlTestComponent implements OnInit {
     if (!query) {
       return;
     }
-    this.searchQuery = query;
-    this.searchQuerySubject.next(query);
+    this.searchQuery = query.html;
+    this.searchQuerySubject.next(query.html);
     this.resetInactivityTimer();
   }
 
