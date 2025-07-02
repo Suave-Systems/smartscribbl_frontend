@@ -4,6 +4,7 @@ import { LoginComponent } from './pages/auth/login/login.component';
 import { CompleteRegOneComponent } from './pages/auth/complete-reg-one/complete-reg-one.component';
 import { DashboardLayoutComponent } from './core/layout/dashboard-layout/dashboard-layout.component';
 import { authGuard } from './core/guards/auth.guard';
+import { ArticleHtmlTestComponent } from './pages/article-html-test/article-html-test.component';
 
 export const routes: Routes = [
   {
@@ -114,6 +115,20 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/article/article.component').then(
             (m) => m.ArticleComponent
+          ),
+      },
+      {
+        path: 'create-test-article',
+        loadComponent: () =>
+          import('./pages/article-html-test/article-html-test.component').then(
+            (m) => m.ArticleHtmlTestComponent
+          ),
+      },
+      {
+        path: 'edit-test-article/:id',
+        loadComponent: () =>
+          import('./pages/article-html-test/article-html-test.component').then(
+            (m) => m.ArticleHtmlTestComponent
           ),
       },
     ],
