@@ -7,10 +7,12 @@
         Writing Mode</app-button>
     </div>
 
-    <quill-editor (onEditorCreated)="onEditorCreated($event)" [format]="'html'" class="h-full"
-      style="display: flex; flex-direction: column;" [(ngModel)]="searchQuery"
-      [placeholder]="'Type or Paste (Ctrl + V) your text here'" [modules]="{ toolbar: toolbarOptions }"
-      (onContentChanged)="onInputChange($event)">
+    <!-- [(ngModel)]="searchQuery" -->
+    <!-- (onContentChanged)="onInputChange($event)" -->
+    <quill-editor (onEditorCreated)="onEditorCreated($event)" (onContentChanged)="onDeltaChange($event)"
+      [modules]="{ toolbar: toolbarOptions }" [format]="'html'"
+      [placeholder]="'Type or Paste (Ctrl + V) your text here'" class="h-full"
+      style="display: flex; flex-direction: column;">
     </quill-editor>
     <!-- <textarea [(ngModel)]="searchQuery" (ngModelChange)="onInputChange($event)"
       class="align-top h-full w-full placeholder-top align-top" placeholder="Type or Paste (Ctrl + V) your text here"
@@ -54,7 +56,8 @@
         @for (result of suggestions; track $index) {
         <li (click)="selectedCorrectionIndex = $index" [ngClass]="{'bg-blue-50': selectedCorrectionIndex == $index}"
           class="text-wrap px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
-          <span class="text-[10px]">Type: {{result?.type}}</span>
+          <p class="text-[10px]">Type: {{result?.type}}</p>
+          <p class="text-[10px]">Reason: {{result?.reason}}</p>
           @if (result.type === 'insertion') {
           @if (selectedCorrectionIndex == $index) {
           <div class="text-holder text-[14px] text-wrap"

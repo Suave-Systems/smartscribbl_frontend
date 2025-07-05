@@ -42,13 +42,17 @@ import { WritingModeComponent } from '../../shared/components/writing-mode/writi
     DeleteWordAtIndexPipe,
     ReplaceWordAtIndicesPipe,
   ],
-  templateUrl: './article-html-test.component.html',
-  styleUrl: './article-html-test.component.scss',
+  templateUrl: './article-html.component.html',
+  styleUrl: './article-html.component.scss',
 })
-export class ArticleHtmlTestComponent implements OnInit {
+export class ArticleHtmlComponent implements OnInit {
   mode: 'create' | 'edit' = 'create';
   private articleId = '';
   searchQuery: string = '';
+  quillEditorInstance: any;
+  deltaContent: any = null;
+  // plainTextContent: string = '';
+
   suggestions: Correction[] = [];
   errorMessage: string = '';
   featuresList = signal<FeaturesResponse[]>([]);
@@ -138,12 +142,24 @@ export class ArticleHtmlTestComponent implements OnInit {
       this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
+  // onEditorCreated(quill: any) {
+  //   quill.legacyGetSemanticHTML = quill.getSemanticHTML;
+  //   quill.getSemanticHTML = (a: number, b: number) =>
+  //     quill
+  //       .legacyGetSemanticHTML(a, b)
+  //       .replaceAll(/((?:&nbsp;)*)&nbsp;/g, '$1 ');
+  // }
+
   onEditorCreated(quill: any) {
-    quill.legacyGetSemanticHTML = quill.getSemanticHTML;
-    quill.getSemanticHTML = (a: number, b: number) =>
-      quill
-        .legacyGetSemanticHTML(a, b)
-        .replaceAll(/((?:&nbsp;)*)&nbsp;/g, '$1 ');
+    this.quillEditorInstance = quill;
+  }
+
+  onDeltaChange(event: any) {
+    this.deltaContent = event.editor.getContents();
+    this.searchQuery = event.editor.getText(); // This gives raw text for index-based processing
+    // this.plainTextContent = event.editor.getText(); // This gives raw text for index-based processing
+    this.resetInactivityTimer();
+    console.log(this.searchQuery);
   }
 
   private resetInactivityTimer(): void {
@@ -225,7 +241,24 @@ export class ArticleHtmlTestComponent implements OnInit {
     );
   }
 
+  highlightError(startIndex: number, endIndex: number) {
+    if (!this.quillEditorInstance) return;
+
+    const length = endIndex - startIndex;
+
+    this.quillEditorInstance.formatText(
+      startIndex,
+      length,
+      {
+        underline: true,
+        color: 'red',
+      },
+      'user'
+    );
+  }
+
   onProcessDocument() {
+    // this.highlightError(0, 5);
     if (!this.activeSubscription()) {
       this.handleNoSubscription();
       return;
@@ -234,17 +267,25 @@ export class ArticleHtmlTestComponent implements OnInit {
     this.loadingSuggestions.set(true);
     this.writingService
       .processDocument({
+        editor_type: 'TEXT',
         document_id: this.articleId,
         subscribed_feature: this.selectedFeature,
         origin_document: this.searchQuery,
       })
       .subscribe({
         next: (response: any) => {
+          console.log(response);
+
           this.loadingSuggestions.set(false);
           this.currentSuggestionList.set(this.selectedFeature);
           this.correctedText = response.data.result.data.corrected_text;
           this.suggestions = response.data.result.data.corrections;
           this.searchQuery = response.data.result.data.original_text;
+
+          this.suggestions.forEach((correction) => {
+            const { start, end } = correction.position;
+            this.highlightError(start, end);
+          });
 
           // populate the text area with the corrected text[response.data.result.original_text];
           this.selectedCorrectionIndex = 0;
@@ -291,45 +332,86 @@ export class ArticleHtmlTestComponent implements OnInit {
       });
   }
 
+  // onAcceptChange(correction: any) {
+  //   // this.searchQuery = value;
+  //   switch (correction.type) {
+  //     case 'insertion':
+  //       this.searchQuery = this.insertFormat.transform(
+  //         this.searchQuery,
+  //         correction.corrected_text,
+  //         correction.position.start,
+  //         false
+  //       );
+  //       this.onProcessDocument();
+  //       // this.onReposition();
+  //       break;
+  //     case 'replacement':
+  //       this.searchQuery = this.replaceFormat.transform(
+  //         this.searchQuery,
+  //         correction.position.start,
+  //         correction.position.end,
+  //         correction.corrected_text,
+  //         false
+  //       );
+  //       this.onProcessDocument();
+  //       // this.onReposition();
+  //       break;
+  //     case 'deletion':
+  //       this.searchQuery = this.deleteFormat.transform(
+  //         this.searchQuery,
+  //         correction.position.start,
+  //         correction.position.end,
+  //         false
+  //       );
+  //       this.onProcessDocument();
+  //       // this.onReposition();
+  //       break;
+  //     case 'refinement':
+  //       this.searchQuery = this.refinedText.text;
+  //       this.refinedText = null;
+  //       break;
+
+  //     default:
+  //       break;
+  //   }
+  // }
+
   onAcceptChange(correction: any) {
-    // this.searchQuery = value;
+    const { start, end } = correction.position;
+
+    if (!this.quillEditorInstance) return;
+
     switch (correction.type) {
       case 'insertion':
-        this.searchQuery = this.insertFormat.transform(
-          this.searchQuery,
+        this.quillEditorInstance.insertText(
+          start,
           correction.corrected_text,
-          correction.position.start,
-          false
+          'user'
         );
-        this.onReposition();
-        break;
-      case 'replacement':
-        this.searchQuery = this.replaceFormat.transform(
-          this.searchQuery,
-          correction.position.start,
-          correction.position.end,
-          correction.corrected_text,
-          false
-        );
-        this.onReposition();
-        break;
-      case 'deletion':
-        this.searchQuery = this.deleteFormat.transform(
-          this.searchQuery,
-          correction.position.start,
-          correction.position.end,
-          false
-        );
-        this.onReposition();
-        break;
-      case 'refinement':
-        this.searchQuery = this.refinedText.text;
-        this.refinedText = null;
         break;
 
-      default:
+      case 'replacement':
+        this.quillEditorInstance.deleteText(start, end - start, 'user');
+        this.quillEditorInstance.insertText(
+          start,
+          correction.corrected_text,
+          'user'
+        );
+        break;
+
+      case 'deletion':
+        this.quillEditorInstance.deleteText(start, end - start, 'user');
+        break;
+
+      case 'refinement':
+        if (this.refinedText?.text) {
+          this.quillEditorInstance.setText(this.refinedText.text);
+          this.refinedText = null;
+        }
         break;
     }
+
+    this.onReposition();
   }
 
   onCreateArticle() {

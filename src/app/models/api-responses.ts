@@ -81,6 +81,7 @@ export interface Correction {
   corrected_text: string;
   position: Position;
   type: string;
+  reason: string;
 }
 
 export interface Position {
@@ -141,6 +142,7 @@ export interface ProcessDocumentRequest {
   document_id: string;
   subscribed_feature: string;
   origin_document: string;
+  editor_type?: 'TEXT' | 'HTML';
 }
 
 export interface WritingOption {

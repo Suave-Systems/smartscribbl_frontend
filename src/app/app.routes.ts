@@ -4,7 +4,7 @@ import { LoginComponent } from './pages/auth/login/login.component';
 import { CompleteRegOneComponent } from './pages/auth/complete-reg-one/complete-reg-one.component';
 import { DashboardLayoutComponent } from './core/layout/dashboard-layout/dashboard-layout.component';
 import { authGuard } from './core/guards/auth.guard';
-import { ArticleHtmlTestComponent } from './pages/article-html-test/article-html-test.component';
+import { ArticleHtmlComponent } from './pages/article-html/article-html.component';
 
 export const routes: Routes = [
   {
@@ -106,31 +106,31 @@ export const routes: Routes = [
       {
         path: 'create-article',
         loadComponent: () =>
-          import('./pages/article/article.component').then(
-            (m) => m.ArticleComponent
+          import('./pages/article-html/article-html.component').then(
+            (m) => m.ArticleHtmlComponent
           ),
       },
       {
         path: 'edit-article/:id',
         loadComponent: () =>
-          import('./pages/article/article.component').then(
-            (m) => m.ArticleComponent
+          import('./pages/article-html/article-html.component').then(
+            (m) => m.ArticleHtmlComponent
           ),
       },
-      {
-        path: 'create-test-article',
-        loadComponent: () =>
-          import('./pages/article-html-test/article-html-test.component').then(
-            (m) => m.ArticleHtmlTestComponent
-          ),
-      },
-      {
-        path: 'edit-test-article/:id',
-        loadComponent: () =>
-          import('./pages/article-html-test/article-html-test.component').then(
-            (m) => m.ArticleHtmlTestComponent
-          ),
-      },
+      // {
+      //   path: 'create-test-article',
+      //   loadComponent: () =>
+      //     import('./pages/article-html/article-html.component').then(
+      //       (m) => m.ArticleHtmlComponent
+      //     ),
+      // },
+      // {
+      //   path: 'edit-test-article/:id',
+      //   loadComponent: () =>
+      //     import('./pages/article-html/article-html.component').then(
+      //       (m) => m.ArticleHtmlComponent
+      //     ),
+      // },
     ],
   },
 ];
