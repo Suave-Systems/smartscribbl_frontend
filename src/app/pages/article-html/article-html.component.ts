@@ -183,15 +183,6 @@ export class ArticleHtmlComponent implements OnInit {
     });
   }
 
-  onInputChange(query: any): void {
-    if (!query) {
-      return;
-    }
-    this.searchQuery = query.html;
-    this.searchQuerySubject.next(query.html);
-    this.resetInactivityTimer();
-  }
-
   getFeatures() {
     this.writingService.getFeatures().subscribe({
       next: (res: any) => {
@@ -215,15 +206,15 @@ export class ArticleHtmlComponent implements OnInit {
   }
 
   getArticleById() {
+    // if (!this.quillEditorInstance) return;
     this.loadingArticle.set(true);
     const sub = this.writingService.getArticleById(this.articleId).subscribe({
       next: (res) => {
         this.loadingArticle.set(false);
-        this.searchQuery = res.origin_document;
         this.title = res.title;
         this.writingService.setWritingOptions(res);
+        this.quillEditorInstance.setText(res.origin_document);
         // this.onProcessDocument();
-        // update the UI with the article body
       },
       error: () => {
         this.loadingArticle.set(false);
@@ -274,8 +265,6 @@ export class ArticleHtmlComponent implements OnInit {
       })
       .subscribe({
         next: (response: any) => {
-          console.log(response);
-
           this.loadingSuggestions.set(false);
           this.currentSuggestionList.set(this.selectedFeature);
           this.correctedText = response.data.result.data.corrected_text;
@@ -331,50 +320,6 @@ export class ArticleHtmlComponent implements OnInit {
         },
       });
   }
-
-  // onAcceptChange(correction: any) {
-  //   // this.searchQuery = value;
-  //   switch (correction.type) {
-  //     case 'insertion':
-  //       this.searchQuery = this.insertFormat.transform(
-  //         this.searchQuery,
-  //         correction.corrected_text,
-  //         correction.position.start,
-  //         false
-  //       );
-  //       this.onProcessDocument();
-  //       // this.onReposition();
-  //       break;
-  //     case 'replacement':
-  //       this.searchQuery = this.replaceFormat.transform(
-  //         this.searchQuery,
-  //         correction.position.start,
-  //         correction.position.end,
-  //         correction.corrected_text,
-  //         false
-  //       );
-  //       this.onProcessDocument();
-  //       // this.onReposition();
-  //       break;
-  //     case 'deletion':
-  //       this.searchQuery = this.deleteFormat.transform(
-  //         this.searchQuery,
-  //         correction.position.start,
-  //         correction.position.end,
-  //         false
-  //       );
-  //       this.onProcessDocument();
-  //       // this.onReposition();
-  //       break;
-  //     case 'refinement':
-  //       this.searchQuery = this.refinedText.text;
-  //       this.refinedText = null;
-  //       break;
-
-  //     default:
-  //       break;
-  //   }
-  // }
 
   onAcceptChange(correction: any) {
     const { start, end } = correction.position;
