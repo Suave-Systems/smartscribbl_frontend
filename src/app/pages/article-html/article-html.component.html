@@ -57,7 +57,7 @@
         <li (click)="selectedCorrectionIndex = $index" [ngClass]="{'bg-blue-50': selectedCorrectionIndex == $index}"
           class="text-wrap px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
           <p class="text-[10px]">Type: {{result?.type}}</p>
-          <p class="text-[10px]">Reason: {{result?.reason}}</p>
+          <p class="font-semibold">Reason: {{result?.reason}}</p>
           @if (result.type === 'insertion') {
           @if (selectedCorrectionIndex == $index) {
           <div class="text-holder text-[14px] text-wrap"
