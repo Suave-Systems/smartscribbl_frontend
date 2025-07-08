@@ -7,16 +7,11 @@
         Writing Mode</app-button>
     </div>
 
-    <!-- [(ngModel)]="searchQuery" -->
-    <!-- (onContentChanged)="onInputChange($event)" -->
     <quill-editor (onEditorCreated)="onEditorCreated($event)" (onContentChanged)="onDeltaChange($event)"
       [modules]="{ toolbar: toolbarOptions }" [format]="'html'"
       [placeholder]="'Type or Paste (Ctrl + V) your text here'" class="h-full"
       style="display: flex; flex-direction: column;">
     </quill-editor>
-    <!-- <textarea [(ngModel)]="searchQuery" (ngModelChange)="onInputChange($event)"
-      class="align-top h-full w-full placeholder-top align-top" placeholder="Type or Paste (Ctrl + V) your text here"
-      type="text"></textarea> -->
   </div>
 
   <div class="border-l-1 px-2 border-gray-300 w-1/3">
@@ -34,7 +29,6 @@
         currentSuggestionList()) {
         <span
           class="absolute -top-1 -right-2 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full">
-
           {{suggestions.length}}
         </span>
         }
@@ -54,7 +48,8 @@
     <div class="results overflow-y-scroll">
       <ul class="max-w-md mx-auto divide-y divide-gray-200 border border-gray-300 rounded-md">
         @for (result of suggestions; track $index) {
-        <li (click)="selectedCorrectionIndex = $index" [ngClass]="{'bg-blue-50': selectedCorrectionIndex == $index}"
+        <li (click)="selectedCorrectionIndex = $index; onSelectCorrection(result)"
+          [ngClass]="{'bg-blue-50': selectedCorrectionIndex == $index}"
           class="text-wrap px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
           <p class="text-[10px]">Type: {{result?.type}}</p>
           <p class="font-semibold">Reason: {{result?.reason}}</p>

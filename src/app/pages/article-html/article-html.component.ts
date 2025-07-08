@@ -101,9 +101,6 @@ export class ArticleHtmlComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getFeatures();
-    this.checkMode();
-
     const sub = this.searchQuerySubject
       .pipe(
         debounceTime(1500), // Wait 1500ms after the last event.
@@ -133,6 +130,8 @@ export class ArticleHtmlComponent implements OnInit {
       });
 
     this.subscriptions.push(sub);
+    this.getFeatures();
+    this.checkMode();
   }
 
   ngOnDestroy() {
@@ -156,10 +155,15 @@ export class ArticleHtmlComponent implements OnInit {
 
   onDeltaChange(event: any) {
     this.deltaContent = event.editor.getContents();
-    this.searchQuery = event.editor.getText(); // This gives raw text for index-based processing
+    this.searchQuery = event.editor.getText(); // This gives raw text for index-based processing;
+    this.searchQuerySubject.next(this.searchQuery);
     // this.plainTextContent = event.editor.getText(); // This gives raw text for index-based processing
     this.resetInactivityTimer();
-    console.log(this.searchQuery);
+  }
+
+  onSelectCorrection(result: any) {
+    const index = result.position.start;
+    this.quillEditorInstance.setSelection(index, 0, 'user');
   }
 
   private resetInactivityTimer(): void {
@@ -213,7 +217,7 @@ export class ArticleHtmlComponent implements OnInit {
         this.loadingArticle.set(false);
         this.title = res.title;
         this.writingService.setWritingOptions(res);
-        this.quillEditorInstance.setText(res.origin_document);
+        this.quillEditorInstance?.setText(res.origin_document);
         // this.onProcessDocument();
       },
       error: () => {
@@ -268,20 +272,21 @@ export class ArticleHtmlComponent implements OnInit {
           this.loadingSuggestions.set(false);
           this.currentSuggestionList.set(this.selectedFeature);
           this.correctedText = response.data.result.data.corrected_text;
-          this.suggestions = response.data.result.data.corrections;
-          this.searchQuery = response.data.result.data.original_text;
-
-          this.suggestions.forEach((correction) => {
-            const { start, end } = correction.position;
-            this.highlightError(start, end);
-          });
+          this.suggestions = response.data.result.data.corrections || [];
+          // this.searchQuery = response.data.result.data.original_text;
+          if (this.suggestions && this.suggestions.length > 0) {
+            this.suggestions.forEach((correction) => {
+              const { start, end } = correction.position;
+              this.highlightError(start, end);
+            });
+          }
 
           // populate the text area with the corrected text[response.data.result.original_text];
           this.selectedCorrectionIndex = 0;
           if (this.selectedFeature === 'AI_REFINEMENT') {
             this.ai_refinement = true;
             this.refinedText = {
-              text: response.data.result.data.revamped_text,
+              text: response.data.result.data.corrected_text,
               type: 'refinement',
             };
           }
@@ -322,7 +327,7 @@ export class ArticleHtmlComponent implements OnInit {
   }
 
   onAcceptChange(correction: any) {
-    const { start, end } = correction.position;
+    const { start, end } = correction.position || { start: 0, end: 0 };
 
     if (!this.quillEditorInstance) return;
 
