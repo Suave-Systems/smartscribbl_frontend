@@ -81,7 +81,7 @@ export class ArticleHtmlComponent implements OnInit {
 
   toolbarOptions = [
     ['bold', 'italic', 'underline'],
-    [{ header: '' }, { header: 1 }, { header: 2 }],
+    [{ header: '' }, { header: 1 }, { header: 2 }, { header: 3 }],
     ['link'],
     [{ list: 'ordered' }, { list: 'bullet' }],
   ];
