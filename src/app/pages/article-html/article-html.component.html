@@ -52,7 +52,7 @@
           [ngClass]="{'bg-blue-50': selectedCorrectionIndex == $index}"
           class="text-wrap px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
           <p class="text-[10px]">Type: {{result?.type}}</p>
-          <p class="font-semibold">Reason: {{result?.reason}}</p>
+          <p><span class="font-semibold">Reason:</span> {{result?.reason}}</p>
           @if (result.type === 'insertion') {
           @if (selectedCorrectionIndex == $index) {
           <div class="text-holder text-[14px] text-wrap"
@@ -82,7 +82,11 @@
           </div>
           }
           @if (selectedCorrectionIndex == $index) {
-          <app-button (buttonClick)="onAcceptChange(result)" inputClass="!px-2 !py-1">Accept</app-button>
+          <div class="flex gap-2">
+            <app-button (buttonClick)="onAcceptChange(result)" inputClass="!px-2 !py-1">Accept</app-button>
+            <app-button (buttonClick)="onDismissChange($index)"
+              inputClass="!px-2 !py-1 !bg-white !border !border-red-500 !text-red-500">Dismiss</app-button>
+          </div>
           }
         </li>
         }
@@ -96,7 +100,11 @@
         <li class="bg-blue-50 px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
           <p class="text-[10px]">Type: Refinement</p>
           <p class="text-[14px]" [innerHTML]="refinedText.text"></p>
-          <app-button (buttonClick)="onAcceptChange(refinedText)" inputClass="!px-2 !py-1">Accept</app-button>
+          <div class="flex gap-2">
+            <app-button (buttonClick)="onAcceptChange(refinedText)" inputClass="!px-2 !py-1">Accept</app-button>
+            <app-button (buttonClick)="onDismissChange(0)"
+              inputClass="!px-2 !py-1 !bg-white !border !border-red-500 !text-red-500">Dismiss</app-button>
+          </div>
         </li>
       </ul>
     </div>

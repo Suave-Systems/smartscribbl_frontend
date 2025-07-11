@@ -252,6 +252,15 @@ export class ArticleHtmlComponent implements OnInit {
     );
   }
 
+  loopAndHighlightErrors() {
+    if (this.suggestions && this.suggestions.length > 0) {
+      this.suggestions.forEach((correction) => {
+        const { start, end } = correction.position;
+        this.highlightError(start, end);
+      });
+    }
+  }
+
   onProcessDocument() {
     // this.highlightError(0, 5);
     if (!this.activeSubscription()) {
@@ -274,12 +283,7 @@ export class ArticleHtmlComponent implements OnInit {
           this.correctedText = response.data.result.data.corrected_text;
           this.suggestions = response.data.result.data.corrections || [];
           // this.searchQuery = response.data.result.data.original_text;
-          if (this.suggestions && this.suggestions.length > 0) {
-            this.suggestions.forEach((correction) => {
-              const { start, end } = correction.position;
-              this.highlightError(start, end);
-            });
-          }
+          this.loopAndHighlightErrors();
 
           // populate the text area with the corrected text[response.data.result.original_text];
           this.selectedCorrectionIndex = 0;
@@ -316,6 +320,7 @@ export class ArticleHtmlComponent implements OnInit {
         next: (response: any) => {
           this.loadingSuggestions.set(false);
           this.suggestions = response.data.corrections;
+          this.loopAndHighlightErrors();
           this.selectedCorrectionIndex = 0;
         },
         error: () => {
@@ -362,6 +367,14 @@ export class ArticleHtmlComponent implements OnInit {
     }
 
     this.onReposition();
+  }
+
+  onDismissChange(index: number) {
+    if (index !== -1) {
+      this.suggestions.splice(index, 1);
+    }
+    this.loopAndHighlightErrors();
+    this.selectedCorrectionIndex = 0;
   }
 
   onCreateArticle() {
