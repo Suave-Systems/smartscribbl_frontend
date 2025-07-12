@@ -111,6 +111,19 @@ body {
 
 .ql-editor {
   font-size: 16px; /* Adjust as needed */
-  line-height: 1.6;
-  text-align: justify;
+  line-height: 2 !important;
+  text-align: justify !important;
+  border: none !important;
+}
+
+.ql-container {
+  border: none !important;
+  box-shadow: none !important;
+  // padding: 16px 32px;
+}
+
+.ql-toolbar.ql-snow {
+  border: none !important;
+  border-bottom: 1px solid #ccc !important; /* Tailwind's gray-200 */
+  box-shadow: none !important;
 }

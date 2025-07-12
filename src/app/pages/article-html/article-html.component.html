@@ -1,6 +1,7 @@
 <!-- Floating Icon -->
-<div matTooltip="Home" [matTooltipPosition]="'right'" class="fixed top-4 z-50">
-  <button [routerLink]="['/main/dashboard']" routerLinkActive="router-link-active"
+<div class="fixed top-4 z-50">
+  <button matTooltip="Home" [matTooltipPosition]="'right'" [routerLink]="['/main/dashboard']"
+    routerLinkActive="router-link-active"
     class="cursor-pointer bg-white pl-6 p-2 rounded-r-full shadow-lg hover:bg-[#fefefe]/90 transition">
     <svg width="24" height="24" viewBox="0 0 79 88" fill="none" xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -19,7 +20,7 @@
 
 
 <div class="flex gap-x-2 h-full w-full p-4">
-  <div class="w-7/10 flex-grow h-full flex flex-col px-20">
+  <div class="w-7/10 flex-grow h-full flex flex-col px-40">
     <div class="flex items-center justify-between w-full mb-3">
       <input class="placeholder:text-gray-400 px-4 text-[14px] font-bold focus:outline-none focus:ring-0" type="text"
         placeholder="Untitled Document" [(ngModel)]="title">

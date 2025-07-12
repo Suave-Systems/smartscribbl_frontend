@@ -204,7 +204,7 @@ export class ArticleHtmlComponent implements OnInit {
   private getFeatures() {
     this.writingService.getFeatures().subscribe({
       next: (res: any) => {
-        this.featuresList.set(res.data.reverse());
+        this.featuresList.set(res.data);
         this.selectedFeature = res.data[0].feature;
       },
     });
@@ -393,8 +393,6 @@ export class ArticleHtmlComponent implements OnInit {
     const { start, end } = suggestion.position;
 
     this.quillEditorInstance.deleteText(start, end - start, 'user');
-    console.log('sugestion', suggestion);
-
     this.quillEditorInstance.insertText(
       start,
       suggestion.original_text,
