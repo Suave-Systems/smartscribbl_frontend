@@ -64,6 +64,20 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'main/create-article',
+    loadComponent: () =>
+      import('./pages/article-html/article-html.component').then(
+        (m) => m.ArticleHtmlComponent
+      ),
+  },
+  {
+    path: 'main/edit-article/:id',
+    loadComponent: () =>
+      import('./pages/article-html/article-html.component').then(
+        (m) => m.ArticleHtmlComponent
+      ),
+  },
+  {
     path: 'main',
     component: DashboardLayoutComponent,
     children: [
@@ -103,20 +117,7 @@ export const routes: Routes = [
             (m) => m.WalletComponent
           ),
       },
-      {
-        path: 'create-article',
-        loadComponent: () =>
-          import('./pages/article-html/article-html.component').then(
-            (m) => m.ArticleHtmlComponent
-          ),
-      },
-      {
-        path: 'edit-article/:id',
-        loadComponent: () =>
-          import('./pages/article-html/article-html.component').then(
-            (m) => m.ArticleHtmlComponent
-          ),
-      },
+
       // {
       //   path: 'create-test-article',
       //   loadComponent: () =>

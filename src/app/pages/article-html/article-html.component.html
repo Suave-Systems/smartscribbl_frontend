@@ -1,5 +1,25 @@
-<div class="flex gap-x-2 h-full w-full ">
-  <div class="flex-grow h-full flex flex-col">
+<!-- Floating Icon -->
+<div matTooltip="Home" [matTooltipPosition]="'right'" class="fixed top-4 z-50">
+  <button [routerLink]="['/main/dashboard']" routerLinkActive="router-link-active"
+    class="cursor-pointer bg-white pl-6 p-2 rounded-r-full shadow-lg hover:bg-[#fefefe]/90 transition">
+    <svg width="24" height="24" viewBox="0 0 79 88" fill="none" xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+      <rect x="0.54541" y="0.620117" width="78" height="87" fill="url(#pattern0_1514_12608)" />
+      <defs>
+        <pattern id="pattern0_1514_12608" patternContentUnits="objectBoundingBox" width="1" height="1">
+          <use xlink:href="#image0_1514_12608" transform="scale(0.0128205 0.0114943)" />
+        </pattern>
+        <image id="image0_1514_12608" width="78" height="87" preserveAspectRatio="none"
+          xlink:href="data:image/png;base64,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" />
+      </defs>
+    </svg>
+
+  </button>
+</div>
+
+
+<div class="flex gap-x-2 h-full w-full p-4">
+  <div class="w-7/10 flex-grow h-full flex flex-col px-20">
     <div class="flex items-center justify-between w-full mb-3">
       <input class="placeholder:text-gray-400 px-4 text-[14px] font-bold focus:outline-none focus:ring-0" type="text"
         placeholder="Untitled Document" [(ngModel)]="title">
@@ -14,7 +34,7 @@
     </quill-editor>
   </div>
 
-  <div class="border-l-1 px-2 border-gray-300 w-1/3">
+  <div class="border-l-1 px-2 border-gray-300 w-3/10">
     <p class="bg-[#F6F6F6] p-2 text-primary">
       AI Assistant
     </p>
@@ -51,8 +71,8 @@
         <li (click)="selectedCorrectionIndex = $index; onSelectCorrection(result)"
           [ngClass]="{'bg-blue-50': selectedCorrectionIndex == $index}"
           class="text-wrap px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
-          <p class="text-[10px]">Type: {{result?.type}}</p>
-          <p><span class="font-semibold">Reason:</span> {{result?.reason}}</p>
+          <!-- <p class="text-[10px]">Type: {{result?.type}}</p> -->
+          <p class="text-[12px]"><span class=" font-semibold">{{result.type | titlecase}}:</span> {{result?.reason}}</p>
           @if (result.type === 'insertion') {
           @if (selectedCorrectionIndex == $index) {
           <div class="text-holder text-[14px] text-wrap"
@@ -82,7 +102,7 @@
           </div>
           }
           @if (selectedCorrectionIndex == $index) {
-          <div class="flex gap-2">
+          <div class="flex gap-2 mt-2">
             <app-button (buttonClick)="onAcceptChange(result)" inputClass="!px-2 !py-1">Accept</app-button>
             <app-button (buttonClick)="onDismissChange(result, $index)"
               inputClass="!px-2 !py-1 !bg-white !border !border-red-500 !text-red-500">Dismiss</app-button>
@@ -98,9 +118,9 @@
     <div class="results">
       <ul class="max-w-md mx-auto divide-y divide-gray-200 border border-gray-300 rounded-md">
         <li class="bg-blue-50 px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
-          <p class="text-[10px]">Type: Refinement</p>
+          <!-- <p class="text-[10px]">Type: Refinement</p> -->
           <p class="text-[14px]" [innerHTML]="refinedText.text"></p>
-          <div class="flex gap-2">
+          <div class="flex gap-2 mt-2">
             <app-button (buttonClick)="onAcceptChange(refinedText)" inputClass="!px-2 !py-1">Accept</app-button>
             <app-button (buttonClick)="onDismissChange(refinedText, 0)"
               inputClass="!px-2 !py-1 !bg-white !border !border-red-500 !text-red-500">Dismiss</app-button>

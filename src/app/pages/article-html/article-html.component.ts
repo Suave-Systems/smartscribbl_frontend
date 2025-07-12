@@ -5,17 +5,18 @@ import {
   inject,
   OnInit,
   signal,
+  ViewEncapsulation,
 } from '@angular/core';
 import { Correction, FeaturesResponse } from '../../models/api-responses';
 import { FormsModule } from '@angular/forms';
-import { NgClass } from '@angular/common';
+import { NgClass, TitleCasePipe } from '@angular/common';
 import { QuillModule } from 'ngx-quill';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { InsertWordAtIndexPipe } from '../../shared/pipes/insert-word-at-index.pipe';
 import { DeleteWordAtIndexPipe } from '../../shared/pipes/delete-word-at-index.pipe';
 import { ReplaceWordAtIndicesPipe } from '../../shared/pipes/replace-word-at-indices.pipe';
 import { NotificationService } from '../../shared/services/notification.service';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { DialogService } from '../../shared/services/dialog.service';
 import { WritingService } from '../../shared/services/writing.service';
 import {
@@ -30,6 +31,12 @@ import {
 import { CookiesService } from '../../shared/services/cookies.service';
 import { WritingModeComponent } from '../../shared/components/writing-mode/writing-mode.component';
 import './red-underline'; // adjust the path as needed
+import Quill from 'quill';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+const AlignStyle: any = Quill.import('attributors/style/align');
+AlignStyle.whitelist = ['right', 'center', 'justify', 'left'];
+Quill.register(AlignStyle, true);
 
 @Component({
   selector: 'app-article-html-test',
@@ -42,9 +49,13 @@ import './red-underline'; // adjust the path as needed
     InsertWordAtIndexPipe,
     DeleteWordAtIndexPipe,
     ReplaceWordAtIndicesPipe,
+    TitleCasePipe,
+    RouterLink,
+    MatTooltipModule,
   ],
   templateUrl: './article-html.component.html',
   styleUrl: './article-html.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class ArticleHtmlComponent implements OnInit {
   mode: 'create' | 'edit' = 'create';
@@ -83,14 +94,15 @@ export class ArticleHtmlComponent implements OnInit {
   toolbarOptions = [
     ['bold', 'italic', 'underline'],
     [{ header: '' }, { header: 1 }, { header: 2 }, { header: 3 }],
+    [{ align: [] }],
     ['link'],
     [{ list: 'ordered' }, { list: 'bullet' }],
   ];
 
   constructor(
-    private insertFormat: InsertWordAtIndexPipe,
-    private replaceFormat: ReplaceWordAtIndicesPipe,
-    private deleteFormat: DeleteWordAtIndexPipe,
+    // private insertFormat: InsertWordAtIndexPipe,
+    // private replaceFormat: ReplaceWordAtIndicesPipe,
+    // private deleteFormat: DeleteWordAtIndexPipe,
     private cookieService: CookiesService
   ) {
     this.activeSubscription.set(
@@ -133,6 +145,15 @@ export class ArticleHtmlComponent implements OnInit {
     this.subscriptions.push(sub);
     this.getFeatures();
     this.checkMode();
+
+    this.quillEditorInstance.formatLine(
+      0,
+      this.searchQuery.length,
+      {
+        align: 'justify',
+      },
+      'user'
+    );
   }
 
   ngOnDestroy() {
@@ -141,14 +162,6 @@ export class ArticleHtmlComponent implements OnInit {
     this.subscriptions.length > 0 &&
       this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
-
-  // onEditorCreated(quill: any) {
-  //   quill.legacyGetSemanticHTML = quill.getSemanticHTML;
-  //   quill.getSemanticHTML = (a: number, b: number) =>
-  //     quill
-  //       .legacyGetSemanticHTML(a, b)
-  //       .replaceAll(/((?:&nbsp;)*)&nbsp;/g, '$1 ');
-  // }
 
   onEditorCreated(quill: any) {
     this.quillEditorInstance = quill;
@@ -188,7 +201,7 @@ export class ArticleHtmlComponent implements OnInit {
     });
   }
 
-  getFeatures() {
+  private getFeatures() {
     this.writingService.getFeatures().subscribe({
       next: (res: any) => {
         this.featuresList.set(res.data.reverse());
@@ -197,7 +210,7 @@ export class ArticleHtmlComponent implements OnInit {
     });
   }
 
-  checkMode() {
+  private checkMode() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       if (params.has('id')) {
         this.mode = 'edit';
@@ -210,7 +223,7 @@ export class ArticleHtmlComponent implements OnInit {
     });
   }
 
-  getArticleById() {
+  private getArticleById() {
     // if (!this.quillEditorInstance) return;
     this.loadingArticle.set(true);
     const sub = this.writingService.getArticleById(this.articleId).subscribe({
@@ -230,14 +243,14 @@ export class ArticleHtmlComponent implements OnInit {
     this.subscriptions.push(sub);
   }
 
-  handleNoSubscription() {
+  private handleNoSubscription() {
     this.notify.error(
       'You need an active subscription to use this feature. Please subscribe to continue.',
       'Subscription Required'
     );
   }
 
-  highlightError(startIndex: number, endIndex: number) {
+  private highlightError(startIndex: number, endIndex: number) {
     if (!this.quillEditorInstance) return;
 
     const length = endIndex - startIndex;
@@ -249,9 +262,17 @@ export class ArticleHtmlComponent implements OnInit {
       true,
       'user'
     );
+
+    this.quillEditorInstance.formatText(
+      startIndex,
+      length,
+      'bold',
+      true,
+      'user'
+    );
   }
 
-  loopAndHighlightErrors() {
+  private loopAndHighlightErrors() {
     if (this.suggestions && this.suggestions.length > 0) {
       this.suggestions.forEach((correction) => {
         const { start, end } = correction.position;
@@ -303,7 +324,7 @@ export class ArticleHtmlComponent implements OnInit {
       });
   }
 
-  onReposition() {
+  private onReposition() {
     if (!this.activeSubscription()) {
       this.handleNoSubscription();
       return;
@@ -370,15 +391,13 @@ export class ArticleHtmlComponent implements OnInit {
 
   onDismissChange(suggestion: any, index: number) {
     const { start, end } = suggestion.position;
-    const length = end - start;
 
-    this.quillEditorInstance.formatText(
+    this.quillEditorInstance.deleteText(start, end - start, 'user');
+    console.log('sugestion', suggestion);
+
+    this.quillEditorInstance.insertText(
       start,
-      length,
-      {
-        underline: false,
-        color: 'black',
-      },
+      suggestion.original_text,
       'user'
     );
     if (index !== -1) {
@@ -388,7 +407,7 @@ export class ArticleHtmlComponent implements OnInit {
     this.selectedCorrectionIndex = 0;
   }
 
-  onCreateArticle() {
+  private onCreateArticle() {
     if (!this.activeSubscription()) {
       this.handleNoSubscription();
       return of(null);
@@ -401,7 +420,7 @@ export class ArticleHtmlComponent implements OnInit {
     });
   }
 
-  onUpdateArticle(): Observable<any> {
+  private onUpdateArticle(): Observable<any> {
     if (!this.activeSubscription()) {
       // this.handleNoSubscription();
       return of(null);

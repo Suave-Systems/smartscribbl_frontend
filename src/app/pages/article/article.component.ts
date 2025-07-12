@@ -138,14 +138,6 @@ export class ArticleComponent implements OnInit {
       this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
-  // onEditorCreated(quill: any) {
-  //   quill.legacyGetSemanticHTML = quill.getSemanticHTML;
-  //   quill.getSemanticHTML = (a: number, b: number) =>
-  //     quill
-  //       .legacyGetSemanticHTML(a, b)
-  //       .replaceAll(/((?:&nbsp;)*)&nbsp;/g, '$1 ');
-  // }
-
   private resetInactivityTimer(): void {
     if (this.inactivityTimer) {
       clearTimeout(this.inactivityTimer);
@@ -176,7 +168,7 @@ export class ArticleComponent implements OnInit {
     this.resetInactivityTimer();
   }
 
-  getFeatures() {
+  private getFeatures() {
     this.writingService.getFeatures().subscribe({
       next: (res: any) => {
         this.featuresList.set(res.data.reverse());
@@ -185,7 +177,7 @@ export class ArticleComponent implements OnInit {
     });
   }
 
-  checkMode() {
+  private checkMode() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       if (params.has('id')) {
         this.mode = 'edit';
@@ -198,7 +190,7 @@ export class ArticleComponent implements OnInit {
     });
   }
 
-  getArticleById() {
+  private getArticleById() {
     this.loadingArticle.set(true);
     const sub = this.writingService.getArticleById(this.articleId).subscribe({
       next: (res) => {
