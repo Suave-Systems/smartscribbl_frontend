@@ -29,6 +29,7 @@ import {
 } from 'rxjs';
 import { CookiesService } from '../../shared/services/cookies.service';
 import { WritingModeComponent } from '../../shared/components/writing-mode/writing-mode.component';
+import './red-underline'; // adjust the path as needed
 
 @Component({
   selector: 'app-article-html-test',
@@ -244,10 +245,8 @@ export class ArticleHtmlComponent implements OnInit {
     this.quillEditorInstance.formatText(
       startIndex,
       length,
-      {
-        underline: true,
-        color: 'red',
-      },
+      'redUnderline',
+      true,
       'user'
     );
   }
@@ -369,7 +368,19 @@ export class ArticleHtmlComponent implements OnInit {
     this.onReposition();
   }
 
-  onDismissChange(index: number) {
+  onDismissChange(suggestion: any, index: number) {
+    const { start, end } = suggestion.position;
+    const length = end - start;
+
+    this.quillEditorInstance.formatText(
+      start,
+      length,
+      {
+        underline: false,
+        color: 'black',
+      },
+      'user'
+    );
     if (index !== -1) {
       this.suggestions.splice(index, 1);
     }
