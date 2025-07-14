@@ -58,6 +58,7 @@ Quill.register(AlignStyle, true);
   encapsulation: ViewEncapsulation.None,
 })
 export class ArticleHtmlComponent implements OnInit {
+  refined: boolean = false;
   mode: 'create' | 'edit' = 'create';
   private articleId = '';
   searchQuery: string = '';
@@ -298,6 +299,7 @@ export class ArticleHtmlComponent implements OnInit {
       })
       .subscribe({
         next: (response: any) => {
+          this.refined = true;
           this.loadingSuggestions.set(false);
           this.currentSuggestionList.set(this.selectedFeature);
           this.correctedText = response.data.result.data.corrected_text;

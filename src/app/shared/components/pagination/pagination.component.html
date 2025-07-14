@@ -1,0 +1,49 @@
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4">
+  <!-- Page Summary -->
+  <div class="text-sm text-gray-600">
+    Page {{ currentPage }} of {{ totalPages }}
+  </div>
+
+  <!-- Page Buttons -->
+  <div class="flex items-center gap-1">
+    <button class="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50" [disabled]="currentPage === 1"
+      (click)="prevPage()">
+      Prev
+    </button>
+    @for (page of paginationRange; track $index) {
+    @if (page === '...') {
+    <span class="px-2 text-gray-500 select-none">...</span>
+    } @else {
+    <button class="px-3 py-1 rounded" [ngClass]="{
+            'bg-primary text-white': currentPage === page,
+            'bg-gray-100 hover:bg-gray-200': currentPage !== page
+          }" (click)="changePage(page)">
+      {{ page }}
+    </button>
+    }
+    }
+
+    <!-- <ng-container *ngFor="let page of paginationRange">
+      <ng-container *ngIf="page === '...'; else pageButton">
+        <span class="px-2 text-gray-500 select-none">...</span>
+      </ng-container>
+      <ng-template #pageButton>
+        <button
+          class="px-3 py-1 rounded"
+          [ngClass]="{
+            'bg-blue-500 text-white': currentPage === page,
+            'bg-gray-100 hover:bg-gray-200': currentPage !== page
+          }"
+          (click)="changePage(page as number)"
+        >
+          {{ page }}
+        </button>
+      </ng-template>
+    </ng-container> -->
+
+    <button class="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+      [disabled]="currentPage === totalPages" (click)="nextPage()">
+      Next
+    </button>
+  </div>
+</div>

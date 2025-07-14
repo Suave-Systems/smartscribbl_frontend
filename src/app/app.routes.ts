@@ -1,10 +1,8 @@
 import { Routes } from '@angular/router';
 import { AuthLayoutComponent } from './core/layout/auth-layout/auth-layout.component';
-import { LoginComponent } from './pages/auth/login/login.component';
-import { CompleteRegOneComponent } from './pages/auth/complete-reg-one/complete-reg-one.component';
 import { DashboardLayoutComponent } from './core/layout/dashboard-layout/dashboard-layout.component';
 import { authGuard } from './core/guards/auth.guard';
-import { ArticleHtmlComponent } from './pages/article-html/article-html.component';
+import { ResetPasswordComponent } from './pages/auth/reset-password/reset-password.component';
 
 export const routes: Routes = [
   {
@@ -30,6 +28,20 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/auth/signup/signup.component').then(
             (m) => m.SignupComponent
+          ),
+      },
+      {
+        path: 'forgot-password',
+        loadComponent: () =>
+          import('./pages/auth/forgot-password/forgot-password.component').then(
+            (m) => m.ForgotPasswordComponent
+          ),
+      },
+      {
+        path: 'reset-password',
+        loadComponent: () =>
+          import('./pages/auth/reset-password/reset-password.component').then(
+            (m) => m.ResetPasswordComponent
           ),
       },
       {
@@ -89,13 +101,6 @@ export const routes: Routes = [
           ),
         // canActivate: [authGuard],
       },
-      // {
-      //   path: 'subscription',
-      //   loadComponent: () =>
-      //     import('./pages/subscriptions/subscriptions.component').then(
-      //       (m) => m.SubscriptionsComponent
-      //     ),
-      // },
       {
         path: 'subscription',
         loadComponent: () =>
@@ -117,6 +122,27 @@ export const routes: Routes = [
             (m) => m.WalletComponent
           ),
       },
+      {
+        path: 'user-profile',
+        loadComponent: () =>
+          import('./pages/profile/profile.component').then(
+            (m) => m.ProfileComponent
+          ),
+      },
+      {
+        path: 'change-password',
+        loadComponent: () =>
+          import('./pages/change-password/change-password.component').then(
+            (m) => m.ChangePasswordComponent
+          ),
+      },
+      // {
+      //   path: 'subscription',
+      //   loadComponent: () =>
+      //     import('./pages/subscriptions/subscriptions.component').then(
+      //       (m) => m.SubscriptionsComponent
+      //     ),
+      // },
 
       // {
       //   path: 'create-test-article',

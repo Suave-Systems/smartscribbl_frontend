@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+} from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
@@ -31,5 +38,18 @@ export class HelperService {
         }
       }
     });
+  }
+
+  passwordMatch(passwordKey: string, confirmPasswordKey: string): ValidatorFn {
+    return (formGroup: AbstractControl): ValidationErrors | null => {
+      const password = formGroup.get(passwordKey);
+      const confirmPassword = formGroup.get(confirmPasswordKey);
+
+      if (!password || !confirmPassword) return null;
+
+      return password.value === confirmPassword.value
+        ? null
+        : { passwordMismatch: true };
+    };
   }
 }

@@ -38,10 +38,26 @@ export class WritingService {
     );
   }
 
-  getArticleList() {
-    return this.http.get<PaginatedResponse<DocumentResponse>>(
-      `${this.baseApi}services/v1/articles/`
-    );
+  getArticleList(params: Record<string, string> = {}) {
+    const keys = Object.keys(params);
+    let url = `${this.baseApi}services/v1/articles/`;
+    if (keys.length > 0) {
+      const queryString = keys
+        .filter(
+          (key) =>
+            params[key] !== undefined &&
+            params[key] !== null &&
+            params[key] !== ''
+        )
+        .map(
+          (key) =>
+            `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
+        )
+        .join('&');
+
+      url += url.includes('?') ? '&' + queryString : '?' + queryString;
+    }
+    return this.http.get<PaginatedResponse<DocumentResponse>>(`${url}`);
   }
 
   getArticleById(id: string) {

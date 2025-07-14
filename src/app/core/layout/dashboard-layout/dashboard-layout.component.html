@@ -1,11 +1,11 @@
 <div class="grid grid-cols-1 h-screen bg-white">
   <!-- Main Content -->
-  <div class="flex h-[calc(100vh)] px-2">
+  <div class="flex h-[calc(100vh)] px-2 w-full">
     <app-sidebar class="w-[233px] h-full border-r border-[#E9E9E9]" (hideSideBar)="showSidebar = false"></app-sidebar>
 
 
     <!-- Content Area -->
-    <main class="flex-grow container">
+    <main class="w-full max-w-none">
       <div class="grid grid-cols-1">
         <!-- Header -->
         <div class="h-[50px] w-full">
@@ -18,5 +18,4 @@
     </main>
 
   </div>
-
 </div>

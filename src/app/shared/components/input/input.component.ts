@@ -18,4 +18,6 @@ export class InputComponent {
     'Invalid input. Please check your entries and try again.';
   @Input('useDefaultError') useDefaultError = true;
   @Input('placeholder') placeholder: string = '';
+  @Input('autocomplete') autocomplete: string = '';
+  @Input('readonly') readonly: boolean = false;
 }

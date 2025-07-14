@@ -13,6 +13,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { DialogService } from '../../../shared/services/dialog.service';
 import { PlanListComponent } from '../../../shared/components/plan-list/plan-list.component';
 import { CookiesService } from '../../../shared/services/cookies.service';
+import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-billing-history',
@@ -25,6 +26,7 @@ import { CookiesService } from '../../../shared/services/cookies.service';
     MatMenuModule,
     DatePipe,
     CurrencyPipe,
+    PaginationComponent,
   ],
   templateUrl: './billing-history.component.html',
   styleUrl: './billing-history.component.scss',
@@ -41,6 +43,9 @@ export class BillingHistoryComponent implements OnInit, OnDestroy {
   billingHistoryList = signal<BillingHistoryResponse[]>([]);
   currentPlan = signal<BillingHistoryResponse | null | undefined>(null);
   planList = signal<any[]>([]);
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalItems = 0;
 
   private subscriptions: Subscription[] = [];
 
@@ -77,12 +82,17 @@ export class BillingHistoryComponent implements OnInit, OnDestroy {
   }
 
   getBillingHistoryList() {
+    const params: any = {
+      page: this.currentPage,
+      page_size: this.itemsPerPage,
+    };
     this.isLoading.set(true);
-    const sub = this.subscriptionService.getSubscriptionList({}).subscribe({
+    const sub = this.subscriptionService.getSubscriptionList(params).subscribe({
       next: (res) => {
         this.isLoading.set(false);
         this.billingHistoryList.set(res.results);
         this.getCurrentPlan();
+        this.totalItems = res.count;
       },
       error: () => {
         this.isLoading.set(false);
@@ -92,6 +102,11 @@ export class BillingHistoryComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions.push(sub);
+  }
+
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.getBillingHistoryList();
   }
 
   getCurrentPlan() {

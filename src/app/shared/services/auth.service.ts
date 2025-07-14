@@ -68,12 +68,10 @@ export class AuthService {
     if (res.code === 200) {
       if (res.token && res.token.access) {
         // Store JWT token in local storage or session storage
-        this.cookieService.set(
-          this.cookieService.COOKIE_NAME,
-          res.token.access
-        );
+        this.setToken(res.token.access);
         this.cookieService.set('refreshToken', res.token.refresh);
         const decodedToken: any = jwtDecode(res.token.access);
+        console.log(decodedToken);
         this.cookieService.set(
           'subscription',
           JSON.stringify(res.has_active_subscription)
@@ -94,6 +92,17 @@ export class AuthService {
     this.cookieService.clearAll();
     this.isAuthenticated.next(false);
     this.router.navigate(['/auth/login']);
+  }
+
+  setToken(token: string) {
+    this.cookieService.set(this.cookieService.COOKIE_NAME, token);
+  }
+
+  refreshToken(refresh: string) {
+    return this.http.post<{ access: string }>(
+      `${this.baseUrl}auth/v1/token/refresh/`,
+      { refresh }
+    );
   }
 
   isLoggedIn(): Observable<boolean> {
@@ -136,6 +145,17 @@ export class AuthService {
       });
 
     return this.signupSubject.asObservable();
+  }
+
+  forgotPassword(payload: { email: string }) {
+    return this.http.post(
+      `${this.baseUrl}auth/v1/reset-password/initiate/`,
+      payload
+    );
+  }
+
+  resetPassword(payload: any) {
+    return this.http.post(`${this.baseUrl}auth/v1/reset-password/`, payload);
   }
 
   verifyEmail(payload: verifyEmailRequest) {
@@ -233,5 +253,20 @@ export class AuthService {
       });
 
     return responseSubject.asObservable();
+  }
+
+  getUser(): Observable<any> {
+    return this.http.get(`${this.baseUrl}users/v1/users/me/`);
+  }
+
+  updateUser(payload: any): Observable<any> {
+    return this.http.patch(
+      `${this.baseUrl}users/v1/users/${payload.id}/`,
+      payload
+    );
+  }
+
+  setNewPassword(payload: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}auth/v1/change-password/`, payload);
   }
 }

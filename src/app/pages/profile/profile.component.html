@@ -1,0 +1,51 @@
+<div class="flex flex-col items-center justify-center bg-[#ffffff] p-8 px-4">
+  <div class="w-full bg-white rounded-xl shadow-lg mx-4 p-8">
+    <div class="flex items-center justify-between">
+      <h2 class="text-[32px] font-semibold text-[#333333] mb-1">My Profile </h2>
+    </div>
+    <p class="text-sm text-[#666666] mb-6">some nice category text</p>
+    @if (errorMessage) {
+    <p class="text-[#F66E6E] text-center text-[1rem]/[1.5rem]">
+      {{errorMessage}}
+    </p>
+    }
+
+    <form [formGroup]="form">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- First Name -->
+        <div class="mb-4">
+          <app-input [type]="'text'" [id]="'first_name'" [autocomplete]="'off'" [autofocus]="true" label="First Name"
+            placeholder="Input first name" [control]="first_name" [useDefaultError]="true"
+            errorMessage="Please enter a valid first name.">
+          </app-input>
+        </div>
+
+        <!-- Last Name -->
+        <div class="mb-4">
+          <app-input [type]="'text'" [id]="'last_name'" [autocomplete]="'off'" [autofocus]="true" label="Last Name"
+            placeholder="Input last name" [control]="last_name" [useDefaultError]="true"
+            errorMessage="Please enter a valid last name.">
+          </app-input>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-4">
+          <app-input [readonly]="true" [type]="'email'" [id]="'email'" [autocomplete]="'off'" [autofocus]="true"
+            label="Email" placeholder="Input email" [control]="email" [useDefaultError]="true"
+            errorMessage="Please enter a valid email address.">
+          </app-input>
+        </div>
+
+      </div>
+
+      <!-- Submit -->
+      <div class="mt-8">
+        <app-button [buttonDisabled]="isLoading()" [loading]="isLoading()" (buttonClick)="onSubmit()">
+          Update Info
+        </app-button>
+      </div>
+    </form>
+
+
+  </div>
+</div>

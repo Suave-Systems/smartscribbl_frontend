@@ -14,6 +14,7 @@ import {
 } from '../../shared/components/delete-dialog/delete-dialog.component';
 import { CookiesService } from '../../shared/services/cookies.service';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,12 +25,16 @@ import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/c
     RouterLink,
     EmptyStateComponent,
     DatePipe,
+    PaginationComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
   isLoading = signal(false);
+  currentPage = 1;
+  itemsPerPage = 16;
+  totalItems = 0;
 
   private writingService = inject(WritingService);
   private dialogService = inject(DialogService);
@@ -77,10 +82,15 @@ export class DashboardComponent {
 
   getArticles() {
     this.isLoading.set(true);
-    const sub = this.writingService.getArticleList().subscribe({
+    const params: any = {
+      page: this.currentPage,
+      page_size: this.itemsPerPage,
+    };
+    const sub = this.writingService.getArticleList(params).subscribe({
       next: (res: any) => {
         this.isLoading.set(false);
         this.articleList.set(res.results);
+        this.totalItems = res.count;
       },
       error: () => {
         this.isLoading.set(false);
@@ -89,6 +99,11 @@ export class DashboardComponent {
     });
 
     this.subscriptions.push(sub);
+  }
+
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.getArticles();
   }
 
   onDeleteArticle(article: any) {

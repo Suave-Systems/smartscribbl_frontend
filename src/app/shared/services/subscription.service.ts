@@ -15,10 +15,26 @@ export class SubscriptionService {
   private http = inject(HttpClient);
   private baseUrl = environment.baseUrl;
 
-  getSubscriptionList(payload: any) {
-    return this.http.get<PaginatedResponse<BillingHistoryResponse>>(
-      `${this.baseUrl}subscriptions/v1/`
-    );
+  getSubscriptionList(params: Record<string, string> = {}) {
+    let url = `${this.baseUrl}subscriptions/v1/`;
+    const keys = Object.keys(params);
+    if (keys.length > 0) {
+      const queryString = keys
+        .filter(
+          (key) =>
+            params[key] !== undefined &&
+            params[key] !== null &&
+            params[key] !== ''
+        )
+        .map(
+          (key) =>
+            `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
+        )
+        .join('&');
+
+      url += url.includes('?') ? '&' + queryString : '?' + queryString;
+    }
+    return this.http.get<PaginatedResponse<BillingHistoryResponse>>(`${url}`);
   }
 
   getSubscriptionById(id: string) {

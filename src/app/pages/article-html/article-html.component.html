@@ -65,6 +65,7 @@
     </div>
 
 
+    @if (refined) {
     @if (!ai_refinement && suggestions && suggestions.length > 0) {
     <div class="results overflow-y-scroll">
       <ul class="max-w-md mx-auto divide-y divide-gray-200 border border-gray-300 rounded-md">
@@ -72,36 +73,37 @@
         <li (click)="selectedCorrectionIndex = $index; onSelectCorrection(result)"
           [ngClass]="{'bg-blue-50': selectedCorrectionIndex == $index}"
           class="text-wrap px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
-          <!-- <p class="text-[10px]">Type: {{result?.type}}</p> -->
-          <p class="text-[12px]"><span class=" font-semibold">{{result.type | titlecase}}:</span> {{result?.reason}}</p>
-          @if (result.type === 'insertion') {
-          @if (selectedCorrectionIndex == $index) {
-          <div class="text-holder text-[14px] text-wrap"
-            [innerHTML]="searchQuery | insertWordAtIndex: result.corrected_text: result.position.start"></div>
-          }
-          <div [innerHTML]="result?.corrected_text" class="py-2">
 
-          </div>
-          }
-          @if (result.type === 'deletion') {
-          @if (selectedCorrectionIndex == $index) {
-          <div class="text-holder text-[14px] text-wrap"
-            [innerHTML]="searchQuery | deleteWordAtIndex : result.position.start: result.position.end">
-          </div>
-          }
-          <div [innerHTML]="result?.original_text" class="py-2">
+          <p class="text-[12px]"><span class="font-semibold">{{ result.type | titlecase }}:</span> {{ result.reason }}
+          </p>
 
-          </div>
-          }
-          @if (result.type === 'replacement') {
+          @switch (result.type) {
+          @case ('insertion') {
           @if (selectedCorrectionIndex == $index) {
           <div class="text-holder text-[14px] text-wrap"
-            [innerHTML]="searchQuery | replaceWordAtIndices : result.position.start: result.position.end: result.corrected_text">
+            [innerHTML]="searchQuery | insertWordAtIndex: result.corrected_text: result.position.start">
           </div>
           }
-          <div [innerHTML]="result?.original_text" class="py-2">
+          <div [innerHTML]="result.corrected_text" class="py-2"></div>
+          }
+          @case ('deletion') {
+          @if (selectedCorrectionIndex == $index) {
+          <div class="text-holder text-[14px] text-wrap"
+            [innerHTML]="searchQuery | deleteWordAtIndex: result.position.start: result.position.end">
           </div>
           }
+          <div [innerHTML]="result.original_text" class="py-2"></div>
+          }
+          @case ('replacement') {
+          @if (selectedCorrectionIndex == $index) {
+          <div class="text-holder text-[14px] text-wrap"
+            [innerHTML]="searchQuery | replaceWordAtIndices: result.position.start: result.position.end: result.corrected_text">
+          </div>
+          }
+          <div [innerHTML]="result.original_text" class="py-2"></div>
+          }
+          }
+
           @if (selectedCorrectionIndex == $index) {
           <div class="flex gap-2 mt-2">
             <app-button (buttonClick)="onAcceptChange(result)" inputClass="!px-2 !py-1">Accept</app-button>
@@ -113,13 +115,10 @@
         }
       </ul>
     </div>
-    }
-
-    @if (ai_refinement && refinedText) {
+    } @else if (ai_refinement && refinedText) {
     <div class="results">
       <ul class="max-w-md mx-auto divide-y divide-gray-200 border border-gray-300 rounded-md">
         <li class="bg-blue-50 px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
-          <!-- <p class="text-[10px]">Type: Refinement</p> -->
           <p class="text-[14px]" [innerHTML]="refinedText.text"></p>
           <div class="flex gap-2 mt-2">
             <app-button (buttonClick)="onAcceptChange(refinedText)" inputClass="!px-2 !py-1">Accept</app-button>
@@ -129,6 +128,10 @@
         </li>
       </ul>
     </div>
+    } @else {
+    <p>Great! Your text looks perfect already!</p>
     }
+    }
+
   </div>
 </div>
