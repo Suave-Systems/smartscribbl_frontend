@@ -263,14 +263,6 @@ export class ArticleHtmlComponent implements OnInit {
       true,
       'user'
     );
-
-    this.quillEditorInstance.formatText(
-      startIndex,
-      length,
-      'bold',
-      true,
-      'user'
-    );
   }
 
   private loopAndHighlightErrors() {
