@@ -64,7 +64,6 @@ export class ArticleHtmlComponent implements OnInit {
   searchQuery: string = '';
   quillEditorInstance: any;
   deltaContent: any = null;
-  // plainTextContent: string = '';
 
   suggestions: Correction[] = [];
   errorMessage: string = '';
@@ -100,12 +99,7 @@ export class ArticleHtmlComponent implements OnInit {
     [{ list: 'ordered' }, { list: 'bullet' }],
   ];
 
-  constructor(
-    // private insertFormat: InsertWordAtIndexPipe,
-    // private replaceFormat: ReplaceWordAtIndicesPipe,
-    // private deleteFormat: DeleteWordAtIndexPipe,
-    private cookieService: CookiesService
-  ) {
+  constructor(private cookieService: CookiesService) {
     this.activeSubscription.set(
       JSON.parse(this.cookieService.get('subscription')) as boolean
     );
@@ -130,7 +124,6 @@ export class ArticleHtmlComponent implements OnInit {
       )
       .subscribe({
         next: (data: any) => {
-          // this.results = data;
           this.creatingArticle.set(false);
           this.errorMessage = '';
           this.mode = 'edit';
@@ -172,7 +165,6 @@ export class ArticleHtmlComponent implements OnInit {
     this.deltaContent = event.editor.getContents();
     this.searchQuery = event.editor.getText(); // This gives raw text for index-based processing;
     this.searchQuerySubject.next(this.searchQuery);
-    // this.plainTextContent = event.editor.getText(); // This gives raw text for index-based processing
     this.resetInactivityTimer();
   }
 
@@ -225,7 +217,6 @@ export class ArticleHtmlComponent implements OnInit {
   }
 
   private getArticleById() {
-    // if (!this.quillEditorInstance) return;
     this.loadingArticle.set(true);
     const sub = this.writingService.getArticleById(this.articleId).subscribe({
       next: (res) => {
@@ -237,7 +228,6 @@ export class ArticleHtmlComponent implements OnInit {
       },
       error: () => {
         this.loadingArticle.set(false);
-        // load error UI
       },
     });
 
@@ -275,7 +265,6 @@ export class ArticleHtmlComponent implements OnInit {
   }
 
   onProcessDocument() {
-    // this.highlightError(0, 5);
     if (!this.activeSubscription()) {
       this.handleNoSubscription();
       return;
@@ -296,7 +285,6 @@ export class ArticleHtmlComponent implements OnInit {
           this.currentSuggestionList.set(this.selectedFeature);
           this.correctedText = response.data.result.data.corrected_text;
           this.suggestions = response.data.result.data.corrections || [];
-          // this.searchQuery = response.data.result.data.original_text;
           this.loopAndHighlightErrors();
 
           // populate the text area with the corrected text[response.data.result.original_text];
@@ -345,7 +333,7 @@ export class ArticleHtmlComponent implements OnInit {
       });
   }
 
-  onAcceptChange(correction: any) {
+  onAcceptChange(correction: any, index: number) {
     const { start, end } = correction.position || { start: 0, end: 0 };
 
     if (!this.quillEditorInstance) return;
@@ -381,6 +369,10 @@ export class ArticleHtmlComponent implements OnInit {
     }
 
     this.onReposition();
+
+    if (index !== -1) {
+      this.suggestions.splice(index, 1);
+    }
   }
 
   onDismissChange(suggestion: any, index: number) {
@@ -414,7 +406,7 @@ export class ArticleHtmlComponent implements OnInit {
 
   private onUpdateArticle(): Observable<any> {
     if (!this.activeSubscription()) {
-      // this.handleNoSubscription();
+      this.handleNoSubscription();
       return of(null);
     }
     const title = this.title || 'Untitled Document';
