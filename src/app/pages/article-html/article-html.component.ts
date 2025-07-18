@@ -33,6 +33,7 @@ import { WritingModeComponent } from '../../shared/components/writing-mode/writi
 import './red-underline'; // adjust the path as needed
 import Quill from 'quill';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { RefinementDialogComponent } from '../../shared/components/refinement-dialog/refinement-dialog.component';
 
 const AlignStyle: any = Quill.import('attributors/style/align');
 AlignStyle.whitelist = ['right', 'center', 'justify', 'left'];
@@ -376,6 +377,10 @@ export class ArticleHtmlComponent implements OnInit {
   }
 
   onDismissChange(suggestion: any, index: number) {
+    if (this.refinedText) {
+      this.refinedText = null;
+      return;
+    }
     const { start, end } = suggestion.position;
 
     this.quillEditorInstance.deleteText(start, end - start, 'user');
@@ -419,5 +424,21 @@ export class ArticleHtmlComponent implements OnInit {
       title: title,
       seed: 0,
     });
+  }
+
+  onReadMore() {
+    this.dialogService
+      .openDialog(RefinementDialogComponent, {
+        width: '640px',
+        data: { refinedText: this.refinedText },
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result.accept) {
+          this.onAcceptChange(this.refinedText, 0);
+          return;
+        }
+        this.onDismissChange(this.refinedText, 0);
+      });
   }
 }

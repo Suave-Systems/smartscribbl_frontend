@@ -121,6 +121,12 @@
         <li class="bg-blue-50 px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
           <p class="text-[14px]" [innerHTML]="refinedText.text"></p>
           <div class="flex gap-2 mt-2">
+            @if (refinedText.text.length > 500) {
+            <app-button (buttonClick)="onReadMore()"
+              inputClass="!px-2 !py-1 !bg-white !border !border-primary !text-primary">
+              READ MORE >>
+            </app-button>
+            }
             <app-button (buttonClick)="onAcceptChange(refinedText, 0)" inputClass="!px-2 !py-1">Accept</app-button>
             <app-button (buttonClick)="onDismissChange(refinedText, 0)"
               inputClass="!px-2 !py-1 !bg-white !border !border-red-500 !text-red-500">Dismiss</app-button>

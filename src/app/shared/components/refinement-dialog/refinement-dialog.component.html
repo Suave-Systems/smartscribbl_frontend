@@ -1,0 +1,12 @@
+<div class="results overflow-y-scroll">
+  <ul class="mx-auto divide-y divide-gray-200 border border-gray-300 rounded-md">
+    <li class="px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
+      <p class="text-[14px]" [innerHTML]="data.refinedText.text"></p>
+      <div class="flex gap-2 mt-2">
+        <app-button (buttonClick)="onAcceptChange()" inputClass="!px-2 !py-1">Accept</app-button>
+        <app-button (buttonClick)="onDismissChange()"
+          inputClass="!px-2 !py-1 !bg-white !border !border-red-500 !text-red-500">Dismiss</app-button>
+      </div>
+    </li>
+  </ul>
+</div>
