@@ -42,7 +42,7 @@
 
     <div class="flex">
       @for (feature of featuresList(); track $index) {
-      <button (click)="selectedFeature = feature.feature"
+      <button [matTooltip]="feature.description" (click)="selectedFeature = feature.feature"
         class="relative text-[12px] text-[#414651] mx-2 py-1 text-nowrap focus:outline-none"
         [ngClass]="{'border-b-2 border-primary ': feature.feature == selectedFeature}">
         {{feature?.name}}
