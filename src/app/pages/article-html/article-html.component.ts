@@ -369,10 +369,9 @@ export class ArticleHtmlComponent implements OnInit {
         break;
     }
 
-    this.onReposition();
-
     if (index !== -1) {
       this.suggestions.splice(index, 1);
+      this.onReposition();
     }
   }
 
