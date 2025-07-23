@@ -65,8 +65,9 @@
     </div>
 
 
-    @if (refined) {
-    @if (!ai_refinement && suggestions && suggestions.length > 0) {
+    @if ((selectedFeature == FeatureType.SpellingChecker || selectedFeature == FeatureType.SentenceRephrase) &&
+    suggestions &&
+    suggestions.length > 0) {
     <div class="results overflow-y-scroll">
       <ul class="max-w-md mx-auto divide-y divide-gray-200 border border-gray-300 rounded-md">
         @for (result of suggestions; track $index) {
@@ -115,7 +116,7 @@
         }
       </ul>
     </div>
-    } @else if (ai_refinement && refinedText) {
+    } @else if (selectedFeature == FeatureType.AiRefinement && refinedText) {
     <div class="results">
       <ul class="max-w-md mx-auto divide-y divide-gray-200 border border-gray-300 rounded-md">
         <li class="bg-blue-50 px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
@@ -136,7 +137,6 @@
     </div>
     } @else {
     <p>Great! Your text looks perfect already!</p>
-    }
     }
 
   </div>

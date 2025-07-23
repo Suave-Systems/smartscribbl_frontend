@@ -31,6 +31,7 @@ import {
 import { CookiesService } from '../../shared/services/cookies.service';
 import { WritingModeComponent } from '../../shared/components/writing-mode/writing-mode.component';
 import './red-underline'; // adjust the path as needed
+import './blue-underline'; // adjust the path as needed
 import Quill from 'quill';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RefinementDialogComponent } from '../../shared/components/refinement-dialog/refinement-dialog.component';
@@ -38,6 +39,12 @@ import { RefinementDialogComponent } from '../../shared/components/refinement-di
 const AlignStyle: any = Quill.import('attributors/style/align');
 AlignStyle.whitelist = ['right', 'center', 'justify', 'left'];
 Quill.register(AlignStyle, true);
+
+export enum FeatureType {
+  SpellingChecker = 'SPELLING_CHECKER',
+  SentenceRephrase = 'SENTENCE_REPHRASE',
+  AiRefinement = 'AI_REFINEMENT',
+}
 
 @Component({
   selector: 'app-article-html-test',
@@ -59,7 +66,6 @@ Quill.register(AlignStyle, true);
   encapsulation: ViewEncapsulation.None,
 })
 export class ArticleHtmlComponent implements OnInit {
-  refined: boolean = false;
   mode: 'create' | 'edit' = 'create';
   private articleId = '';
   searchQuery: string = '';
@@ -70,6 +76,7 @@ export class ArticleHtmlComponent implements OnInit {
   errorMessage: string = '';
   featuresList = signal<FeaturesResponse[]>([]);
   selectedFeature = '';
+  FeatureType = FeatureType;
   selectedCorrectionIndex = 0;
   correctedText: string = '';
   loadingSuggestions = signal(false);
@@ -88,7 +95,6 @@ export class ArticleHtmlComponent implements OnInit {
   private subscriptions: Subscription[] = [];
   private inactivityTimer: any;
   private writingOption = computed(() => this.writingService.writingOptions());
-  ai_refinement = false;
   refinedText: any = null;
   title = '';
 
@@ -141,14 +147,14 @@ export class ArticleHtmlComponent implements OnInit {
     this.getFeatures();
     this.checkMode();
 
-    this.quillEditorInstance.formatLine(
-      0,
-      this.searchQuery.length,
-      {
-        align: 'justify',
-      },
-      'user'
-    );
+    // this.quillEditorInstance.formatLine(
+    //   0,
+    //   this.searchQuery.length,
+    //   {
+    //     align: 'justify',
+    //   },
+    //   'user'
+    // );
   }
 
   ngOnDestroy() {
@@ -247,6 +253,18 @@ export class ArticleHtmlComponent implements OnInit {
 
     const length = endIndex - startIndex;
 
+    if (this.selectedFeature === FeatureType.SentenceRephrase) {
+      console.log(`sentence rephrase`);
+
+      this.quillEditorInstance.formatText(
+        startIndex,
+        length,
+        'blueUnderline',
+        true,
+        'user'
+      );
+      return;
+    }
     this.quillEditorInstance.formatText(
       startIndex,
       length,
@@ -270,7 +288,6 @@ export class ArticleHtmlComponent implements OnInit {
       this.handleNoSubscription();
       return;
     }
-    this.ai_refinement = false;
     this.loadingSuggestions.set(true);
     this.writingService
       .processDocument({
@@ -281,7 +298,6 @@ export class ArticleHtmlComponent implements OnInit {
       })
       .subscribe({
         next: (response: any) => {
-          this.refined = true;
           this.loadingSuggestions.set(false);
           this.currentSuggestionList.set(this.selectedFeature);
           this.correctedText = response.data.result.data.corrected_text;
@@ -290,8 +306,7 @@ export class ArticleHtmlComponent implements OnInit {
 
           // populate the text area with the corrected text[response.data.result.original_text];
           this.selectedCorrectionIndex = 0;
-          if (this.selectedFeature === 'AI_REFINEMENT') {
-            this.ai_refinement = true;
+          if (this.selectedFeature === FeatureType.AiRefinement) {
             this.refinedText = {
               text: response.data.result.data.corrected_text,
               type: 'refinement',
