@@ -166,6 +166,19 @@ export class ArticleHtmlComponent implements OnInit {
 
   onEditorCreated(quill: any) {
     this.quillEditorInstance = quill;
+
+    // Remove redUnderline format when pasting
+    quill.clipboard.addMatcher(Node.ELEMENT_NODE, (node: any, delta: any) => {
+      delta.ops.forEach((op: any) => {
+        if (op.attributes && op.attributes.redUnderline) {
+          delete op.attributes.redUnderline;
+        }
+        if (op.attributes && op.attributes.blueUnderline) {
+          delete op.attributes.blueUnderline;
+        }
+      });
+      return delta;
+    });
   }
 
   onDeltaChange(event: any) {
@@ -254,8 +267,6 @@ export class ArticleHtmlComponent implements OnInit {
     const length = endIndex - startIndex;
 
     if (this.selectedFeature === FeatureType.SentenceRephrase) {
-      console.log(`sentence rephrase`);
-
       this.quillEditorInstance.formatText(
         startIndex,
         length,

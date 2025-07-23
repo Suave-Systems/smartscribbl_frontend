@@ -20,21 +20,6 @@ body {
   @apply text-black;
 }
 
-.underline-error {
-  @apply underline decoration-red-500 decoration-3 underline-offset-4;
-}
-
-.highlight-correction {
-  @apply text-black bg-yellow-300 px-1 rounded;
-}
-
-.inserted-word {
-  @apply bg-green-300 text-black px-1 rounded;
-}
-.deleted-word {
-  @apply text-red-500 line-through;
-}
-
 .spinner {
   width: 16px;
   height: 16px;
@@ -107,6 +92,22 @@ body {
   padding: 0 !important;
   background: transparent;
   box-shadow: none;
+}
+
+.underline-error {
+  @apply underline decoration-red-500 decoration-3 underline-offset-4;
+}
+
+.highlight-correction {
+  @apply text-black bg-yellow-300 px-1 rounded;
+}
+
+.inserted-word {
+  @apply bg-green-300 text-black px-1 rounded;
+}
+
+.deleted-word {
+  @apply text-red-500 line-through;
 }
 
 .ql-editor {
