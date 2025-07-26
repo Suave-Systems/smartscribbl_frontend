@@ -2,9 +2,12 @@ import {
   Component,
   computed,
   effect,
+  ElementRef,
   inject,
   OnInit,
+  QueryList,
   signal,
+  ViewChildren,
   ViewEncapsulation,
 } from '@angular/core';
 import { Correction, FeaturesResponse } from '../../models/api-responses';
@@ -66,6 +69,8 @@ export enum FeatureType {
   encapsulation: ViewEncapsulation.None,
 })
 export class ArticleHtmlComponent implements OnInit {
+  @ViewChildren('suggestionRef') suggestionRefs!: QueryList<ElementRef>;
+
   mode: 'create' | 'edit' = 'create';
   private articleId = '';
   searchQuery: string = '';
@@ -167,6 +172,13 @@ export class ArticleHtmlComponent implements OnInit {
   onEditorCreated(quill: any) {
     this.quillEditorInstance = quill;
 
+    quill.root.addEventListener('click', (e: MouseEvent) => {
+      const selection = quill.getSelection();
+      if (selection) {
+        this.onEditorClick(selection.index);
+      }
+    });
+
     // Remove redUnderline format when pasting
     quill.clipboard.addMatcher(Node.ELEMENT_NODE, (node: any, delta: any) => {
       delta.ops.forEach((op: any) => {
@@ -181,6 +193,30 @@ export class ArticleHtmlComponent implements OnInit {
     });
   }
 
+  onEditorClick(clickedIndex: number) {
+    // Find the suggestion whose range includes the clicked index
+    const foundIndex = this.suggestions.findIndex((correction: any) => {
+      const { start, end } = correction.position;
+      return clickedIndex >= start && clickedIndex <= end;
+    });
+
+    if (foundIndex !== -1) {
+      this.scrollSuggestionIntoView(foundIndex);
+    }
+  }
+
+  scrollSuggestionIntoView(index: number) {
+    const element = this.suggestionRefs.find((_, i) => i === index);
+    if (element) {
+      element.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      // this.selectedCorrectionIndex = index;
+      this.onSelectCorrection(this.suggestions[index], index);
+    }
+  }
+
   onDeltaChange(event: any) {
     this.deltaContent = event.editor.getContents();
     this.searchQuery = event.editor.getText(); // This gives raw text for index-based processing;
@@ -188,9 +224,44 @@ export class ArticleHtmlComponent implements OnInit {
     this.resetInactivityTimer();
   }
 
-  onSelectCorrection(result: any) {
-    const index = result.position.start;
-    this.quillEditorInstance.setSelection(index, 0, 'user');
+  onSelectCorrection(result: any, index: number) {
+    if (this.selectedCorrectionIndex === index) return;
+    this.selectedCorrectionIndex = index;
+    const { start, end } = result.position;
+    const length = end - start;
+
+    if (!this.quillEditorInstance) return;
+
+    // 1. Move the cursor to the word
+    this.quillEditorInstance.setSelection(end, 0, 'user');
+
+    this.quillEditorInstance.formatText(
+      0,
+      this.quillEditorInstance.getLength(),
+      {
+        background: false,
+      },
+      'user'
+    );
+
+    // 2. Add background color based on correction type
+    const bgColor =
+      this.selectedFeature === FeatureType.SentenceRephrase
+        ? '#0D79C933'
+        : '#fb2c3633';
+
+    this.quillEditorInstance.formatText(
+      start,
+      length,
+      {
+        background: bgColor,
+      },
+      'user'
+    );
+
+    const bounds = this.quillEditorInstance.getBounds(start);
+    const container = this.quillEditorInstance.root.parentElement;
+    container?.scrollTo({ top: bounds.top - 50, behavior: 'smooth' });
   }
 
   private resetInactivityTimer(): void {
@@ -286,6 +357,17 @@ export class ArticleHtmlComponent implements OnInit {
   }
 
   private loopAndHighlightErrors() {
+    this.quillEditorInstance.formatText(
+      0,
+      this.quillEditorInstance.getLength(),
+      {
+        background: false,
+        underline: false,
+        redUnderline: false,
+        blueUnderline: false,
+      },
+      'user'
+    );
     if (this.suggestions && this.suggestions.length > 0) {
       this.suggestions.forEach((correction) => {
         const { start, end } = correction.position;
@@ -316,7 +398,7 @@ export class ArticleHtmlComponent implements OnInit {
           this.loopAndHighlightErrors();
 
           // populate the text area with the corrected text[response.data.result.original_text];
-          this.selectedCorrectionIndex = 0;
+          this.onSelectCorrection(this.suggestions[0], 0);
           if (this.selectedFeature === FeatureType.AiRefinement) {
             this.refinedText = {
               text: response.data.result.data.corrected_text,
@@ -328,7 +410,6 @@ export class ArticleHtmlComponent implements OnInit {
           this.loadingSuggestions.set(false);
           this.correctedText = '';
           this.suggestions = [];
-          this.selectedCorrectionIndex = 0;
         },
       });
   }
@@ -350,12 +431,11 @@ export class ArticleHtmlComponent implements OnInit {
           this.loadingSuggestions.set(false);
           this.suggestions = response.data.corrections;
           this.loopAndHighlightErrors();
-          this.selectedCorrectionIndex = 0;
+          this.onSelectCorrection(this.suggestions[0], 0);
         },
         error: () => {
           this.loadingSuggestions.set(false);
           this.suggestions = [];
-          this.selectedCorrectionIndex = 0;
         },
       });
   }
@@ -418,7 +498,9 @@ export class ArticleHtmlComponent implements OnInit {
       this.suggestions.splice(index, 1);
     }
     this.loopAndHighlightErrors();
-    this.selectedCorrectionIndex = 0;
+    index > 0
+      ? this.onSelectCorrection(this.suggestions[index - 1], index - 1)
+      : null;
   }
 
   private onCreateArticle() {

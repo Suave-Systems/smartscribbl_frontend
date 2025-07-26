@@ -35,7 +35,7 @@
     </quill-editor>
   </div>
 
-  <div class="border-l-1 px-2 border-gray-300 w-3/10">
+  <div class="flex flex-col border-l-1 px-2 border-gray-300 w-3/10">
     <p class="bg-[#F6F6F6] p-2 text-primary">
       AI Assistant
     </p>
@@ -56,22 +56,21 @@
       </button>
       }
     </div>
-    <div class="py-3">
 
+    <div class="py-3">
       <app-button [loading]="loadingSuggestions() || creatingArticle() || loadingArticle()"
         [buttonDisabled]="!searchQuery || loadingSuggestions() || creatingArticle() || loadingArticle()"
         inputClass="!p-2 !text-[14px]" (click)="onProcessDocument()">Review
         Suggestions</app-button>
     </div>
 
-
     @if ((selectedFeature == FeatureType.SpellingChecker || selectedFeature == FeatureType.SentenceRephrase) &&
     suggestions &&
     suggestions.length > 0) {
-    <div class="results overflow-y-scroll">
+    <div class="results h-full overflow-y-scroll">
       <ul class="max-w-md mx-auto divide-y divide-gray-200 border border-gray-300 rounded-md">
         @for (result of suggestions; track $index) {
-        <li (click)="selectedCorrectionIndex = $index; onSelectCorrection(result)"
+        <li #suggestionRef (click)="onSelectCorrection(result, $index)"
           [ngClass]="{'bg-blue-50': selectedCorrectionIndex == $index}"
           class="text-wrap px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
 
@@ -117,7 +116,7 @@
       </ul>
     </div>
     } @else if (selectedFeature == FeatureType.AiRefinement && refinedText) {
-    <div class="results">
+    <div class="results overflow-y-scroll">
       <ul class="max-w-md mx-auto divide-y divide-gray-200 border border-gray-300 rounded-md">
         <li class="bg-blue-50 px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors">
           <p class="text-[14px]" [innerHTML]="refinedText.text"></p>
