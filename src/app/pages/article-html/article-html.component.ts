@@ -212,7 +212,6 @@ export class ArticleHtmlComponent implements OnInit {
         behavior: 'smooth',
         block: 'center',
       });
-      // this.selectedCorrectionIndex = index;
       this.onSelectCorrection(this.suggestions[index], index);
     }
   }

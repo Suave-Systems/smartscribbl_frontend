@@ -165,6 +165,7 @@ export interface Plan {
   last_modified: string;
   date_created: string;
   type: string;
+  name: string;
   price: string;
   discounted_price: string;
   description?: any;
