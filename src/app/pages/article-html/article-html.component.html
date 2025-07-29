@@ -59,7 +59,7 @@
 
     <div class="py-3">
       <app-button [loading]="loadingSuggestions() || creatingArticle() || loadingArticle()"
-        [buttonDisabled]="!searchQuery || loadingSuggestions() || creatingArticle() || loadingArticle()"
+        [buttonDisabled]="!searchQuery || loadingSuggestions() || creatingArticle() || loadingArticle() || !articleId"
         inputClass="!p-2 !text-[14px]" (click)="onProcessDocument()">Review
         Suggestions</app-button>
     </div>

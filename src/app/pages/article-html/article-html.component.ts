@@ -72,7 +72,7 @@ export class ArticleHtmlComponent implements OnInit {
   @ViewChildren('suggestionRef') suggestionRefs!: QueryList<ElementRef>;
 
   mode: 'create' | 'edit' = 'create';
-  private articleId = '';
+  articleId = '';
   searchQuery: string = '';
   quillEditorInstance: any;
   deltaContent: any = null;
@@ -82,7 +82,7 @@ export class ArticleHtmlComponent implements OnInit {
   featuresList = signal<FeaturesResponse[]>([]);
   selectedFeature = '';
   FeatureType = FeatureType;
-  selectedCorrectionIndex = 0;
+  selectedCorrectionIndex = -1;
   correctedText: string = '';
   loadingSuggestions = signal(false);
   creatingArticle = signal(false);
@@ -306,24 +306,6 @@ export class ArticleHtmlComponent implements OnInit {
     });
   }
 
-  private getArticleById() {
-    this.loadingArticle.set(true);
-    const sub = this.writingService.getArticleById(this.articleId).subscribe({
-      next: (res) => {
-        this.loadingArticle.set(false);
-        this.title = res.title;
-        this.writingService.setWritingOptions(res);
-        this.quillEditorInstance?.setText(res.origin_document);
-        // this.onProcessDocument();
-      },
-      error: () => {
-        this.loadingArticle.set(false);
-      },
-    });
-
-    this.subscriptions.push(sub);
-  }
-
   private handleNoSubscription() {
     this.notify.error(
       'You need an active subscription to use this feature. Please subscribe to continue.',
@@ -500,6 +482,24 @@ export class ArticleHtmlComponent implements OnInit {
     index > 0
       ? this.onSelectCorrection(this.suggestions[index - 1], index - 1)
       : null;
+  }
+
+  private getArticleById() {
+    this.loadingArticle.set(true);
+    const sub = this.writingService.getArticleById(this.articleId).subscribe({
+      next: (res) => {
+        this.loadingArticle.set(false);
+        this.title = res.title;
+        this.writingService.setWritingOptions(res);
+        this.quillEditorInstance?.setText(res.origin_document);
+        // this.onProcessDocument();
+      },
+      error: () => {
+        this.loadingArticle.set(false);
+      },
+    });
+
+    this.subscriptions.push(sub);
   }
 
   private onCreateArticle() {
