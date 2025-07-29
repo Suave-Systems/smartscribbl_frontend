@@ -151,15 +151,6 @@ export class ArticleHtmlComponent implements OnInit {
     this.subscriptions.push(sub);
     this.getFeatures();
     this.checkMode();
-
-    // this.quillEditorInstance.formatLine(
-    //   0,
-    //   this.searchQuery.length,
-    //   {
-    //     align: 'justify',
-    //   },
-    //   'user'
-    // );
   }
 
   ngOnDestroy() {
@@ -193,7 +184,7 @@ export class ArticleHtmlComponent implements OnInit {
     });
   }
 
-  onEditorClick(clickedIndex: number) {
+  private onEditorClick(clickedIndex: number) {
     // Find the suggestion whose range includes the clicked index
     const foundIndex = this.suggestions.findIndex((correction: any) => {
       const { start, end } = correction.position;
@@ -205,7 +196,7 @@ export class ArticleHtmlComponent implements OnInit {
     }
   }
 
-  scrollSuggestionIntoView(index: number) {
+  private scrollSuggestionIntoView(index: number) {
     const element = this.suggestionRefs.find((_, i) => i === index);
     if (element) {
       element.nativeElement.scrollIntoView({
@@ -362,6 +353,7 @@ export class ArticleHtmlComponent implements OnInit {
       this.handleNoSubscription();
       return;
     }
+    if (!this.articleId) return;
     this.loadingSuggestions.set(true);
     this.writingService
       .processDocument({
@@ -400,6 +392,7 @@ export class ArticleHtmlComponent implements OnInit {
       this.handleNoSubscription();
       return;
     }
+    if (!this.articleId) return;
     this.loadingSuggestions.set(true);
     this.writingService
       .repositionWord({
@@ -484,6 +477,22 @@ export class ArticleHtmlComponent implements OnInit {
       : null;
   }
 
+  onReadMore() {
+    this.dialogService
+      .openDialog(RefinementDialogComponent, {
+        width: '640px',
+        data: { refinedText: this.refinedText },
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result.accept) {
+          this.onAcceptChange(this.refinedText, 0);
+          return;
+        }
+        this.onDismissChange(this.refinedText, 0);
+      });
+  }
+
   private getArticleById() {
     this.loadingArticle.set(true);
     const sub = this.writingService.getArticleById(this.articleId).subscribe({
@@ -530,21 +539,5 @@ export class ArticleHtmlComponent implements OnInit {
       title: title,
       seed: 0,
     });
-  }
-
-  onReadMore() {
-    this.dialogService
-      .openDialog(RefinementDialogComponent, {
-        width: '640px',
-        data: { refinedText: this.refinedText },
-      })
-      .afterClosed()
-      .subscribe((result) => {
-        if (result.accept) {
-          this.onAcceptChange(this.refinedText, 0);
-          return;
-        }
-        this.onDismissChange(this.refinedText, 0);
-      });
   }
 }
