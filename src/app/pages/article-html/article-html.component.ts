@@ -215,7 +215,7 @@ export class ArticleHtmlComponent implements OnInit {
   }
 
   onSelectCorrection(result: any, index: number) {
-    if (this.selectedCorrectionIndex === index) return;
+    // if (this.selectedCorrectionIndex === index) return;
     this.selectedCorrectionIndex = index;
     const { start, end } = result.position;
     const length = end - start;
