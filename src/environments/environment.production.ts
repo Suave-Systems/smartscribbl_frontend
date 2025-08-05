@@ -1,3 +1,3 @@
 export const environment = {
-  baseUrl: 'https://smartscribbl-backend.onrender.com/',
+  baseUrl: 'https://smartscribbl-013364542035.herokuapp.com/',
 };
