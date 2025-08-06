@@ -7,11 +7,16 @@ import { ResetPasswordComponent } from './pages/auth/reset-password/reset-passwo
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () =>
-      import('./pages/landing/landing.component').then(
-        (m) => m.LandingComponent
-      ),
+    redirectTo: 'auth/login',
+    pathMatch: 'full',
   },
+  // {
+  //   path: '',
+  //   loadComponent: () =>
+  //     import('./pages/landing/landing.component').then(
+  //       (m) => m.LandingComponent
+  //     ),
+  // },
   {
     path: 'auth',
     component: AuthLayoutComponent,
