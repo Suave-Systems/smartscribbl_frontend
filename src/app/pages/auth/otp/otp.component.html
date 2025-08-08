@@ -23,7 +23,7 @@
       class="w-full">Verify</app-button>
     <p class="text-center text-grey">
       Didn’t get the code?
-      <span [routerLink]="['/auth/signup']" routerLinkActive="router-link-active" class="cursor-pointer text-primary">
+      <span (click)="onResendOtp()" class="cursor-pointer text-primary">
         Resend
       </span>
     </p>

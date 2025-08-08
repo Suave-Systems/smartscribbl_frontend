@@ -35,8 +35,16 @@ export class AuthService {
       .subscribe({
         next: (res) => {
           this.toastr.success(res.message, 'SUCCESS');
+          const stateObj = {
+            mode: 'signup',
+            otp: res.otp,
+            email: payload.email,
+          };
+          const ref = btoa(JSON.stringify(stateObj));
+
           // this.router.navigate(['/auth/otp'], {
-          //   queryParams: { mode: 'login' },
+          //   queryParams: { mode: 'login', ref },
+          //   state: stateObj,
           // });
           this.handleToken(res);
           this.loginSubject.complete();
@@ -127,9 +135,16 @@ export class AuthService {
       .post<SignupResponse>(`${this.baseUrl}auth/v1/customer/user/`, payload)
       .subscribe({
         next: (res) => {
+          const stateObj = {
+            mode: 'signup',
+            otp: res.otp,
+            email: payload.email,
+          };
           if (res.code === 201) {
+            const ref = btoa(JSON.stringify(stateObj));
             this.router.navigate(['/auth/otp'], {
-              queryParams: { mode: 'signup', otp: res.otp },
+              queryParams: { mode: 'signup', ref },
+              state: stateObj,
             });
             this.toastr.success(res.message, 'Success');
             this.signupSubject.complete();
@@ -269,5 +284,11 @@ export class AuthService {
 
   setNewPassword(payload: any): Observable<any> {
     return this.http.post(`${this.baseUrl}auth/v1/change-password/`, payload);
+  }
+
+  resendOtp(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}auth/v1/resend-otp/`, {
+      email,
+    });
   }
 }

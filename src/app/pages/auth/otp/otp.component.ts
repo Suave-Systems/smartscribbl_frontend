@@ -7,6 +7,7 @@ import { AuthService } from '../../../shared/services/auth.service';
 import { Subscription } from 'rxjs';
 import { AiToneComponent } from '../ai-tone/ai-tone.component';
 import { DialogService } from '../../../shared/services/dialog.service';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-otp',
@@ -28,10 +29,12 @@ export class OtpComponent implements OnInit, OnDestroy {
 
   private dialogService = inject(DialogService);
   private authService = inject(AuthService);
+  private notify = inject(NotificationService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
   private subscriptions: Subscription[] = [];
+  private email = '';
 
   ngOnInit(): void {
     this.getMode();
@@ -49,10 +52,13 @@ export class OtpComponent implements OnInit, OnDestroy {
 
   getMode() {
     this.isLoading.set(true);
+    const navigation = this.router.getCurrentNavigation();
     this.route.queryParamMap.subscribe((params: ParamMap) => {
       if (params.has('mode')) {
         const mode = params.get('mode') as any;
         this.mode = mode;
+        const data = JSON.parse(atob(params.get('ref') || ''));
+        this.email = data.email;
         this.isLoading.set(false);
       }
 
@@ -123,5 +129,24 @@ export class OtpComponent implements OnInit, OnDestroy {
   }
   onLoginVerify() {
     return this.authService.verifyLogin({ otp_code: this.otp.value as string });
+  }
+
+  onResendOtp() {
+    this.isLoading.set(true);
+    const sub = this.authService.resendOtp(this.email).subscribe({
+      next: (res) => {
+        this.isLoading.set(false);
+        this.notify.success('OTP has been resent to your email');
+        // Optionally, you can reset the OTP input field here
+        this.otp.setValue('');
+        this.otp.updateValueAndValidity();
+        this.errormessage = ''; // Clear any previous error message
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.errormessage = err.error.message;
+      },
+    });
+    this.subscriptions.push(sub);
   }
 }
