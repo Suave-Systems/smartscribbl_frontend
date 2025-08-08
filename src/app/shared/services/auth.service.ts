@@ -35,18 +35,20 @@ export class AuthService {
       .subscribe({
         next: (res) => {
           this.toastr.success(res.message, 'SUCCESS');
-          const stateObj = {
-            mode: 'signup',
-            otp: res.otp,
-            email: payload.email,
-          };
-          const ref = btoa(JSON.stringify(stateObj));
-
-          // this.router.navigate(['/auth/otp'], {
-          //   queryParams: { mode: 'login', ref },
-          //   state: stateObj,
-          // });
-          this.handleToken(res);
+          if (res.is_verified === false) {
+            const stateObj = {
+              mode: 'signup',
+              otp: res.otp,
+              email: payload.email,
+            };
+            const ref = btoa(JSON.stringify(stateObj));
+            this.router.navigate(['/auth/otp'], {
+              queryParams: { mode: 'login', ref },
+              state: stateObj,
+            });
+          } else {
+            this.handleToken(res);
+          }
           this.loginSubject.complete();
         },
         error: (err) => {

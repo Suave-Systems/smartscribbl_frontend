@@ -4,8 +4,13 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
+  code: number;
+  status: string;
   message: string;
   otp: string;
+  token: Token;
+  has_active_subscription: string;
+  is_verified: boolean;
 }
 
 export interface SignupRequest {
