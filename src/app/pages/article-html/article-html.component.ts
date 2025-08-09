@@ -9,6 +9,7 @@ import {
   signal,
   ViewChildren,
   ViewEncapsulation,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { Correction, FeaturesResponse } from '../../models/api-responses';
 import { FormsModule } from '@angular/forms';
@@ -66,6 +67,7 @@ export enum FeatureType {
   ],
   templateUrl: './article-html.component.html',
   styleUrl: './article-html.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
 export class ArticleHtmlComponent implements OnInit {
@@ -103,6 +105,8 @@ export class ArticleHtmlComponent implements OnInit {
   refinedText: any = null;
   title = '';
 
+  private pendingOriginText: string | null = null;
+
   toolbarOptions = [
     ['bold', 'italic', 'underline'],
     [{ header: '' }, { header: 1 }, { header: 2 }, { header: 3 }],
@@ -112,9 +116,15 @@ export class ArticleHtmlComponent implements OnInit {
   ];
 
   constructor(private cookieService: CookiesService) {
-    this.activeSubscription.set(
-      JSON.parse(this.cookieService.get('subscription')) as boolean
-    );
+    // Safely parse subscription cookie to avoid JSON.parse crashes
+    let isActive = false;
+    try {
+      const sub = this.cookieService.get('subscription');
+      isActive = !!JSON.parse(sub || 'false');
+    } catch {
+      isActive = false;
+    }
+    this.activeSubscription.set(isActive);
     effect(() => {
       this.writingOption();
     });
@@ -126,11 +136,14 @@ export class ArticleHtmlComponent implements OnInit {
         debounceTime(1500), // Wait 1500ms after the last event.
         distinctUntilChanged(), // Only continue if the value has changed.
         switchMap((query: string): Observable<any> => {
+          // Skip if empty/whitespace
+          if (!query || !query.trim()) {
+            return of(null);
+          }
           if (this.mode === 'create') {
             this.creatingArticle.set(true);
             return this.onCreateArticle();
           }
-
           return of(null);
         })
       )
@@ -162,6 +175,11 @@ export class ArticleHtmlComponent implements OnInit {
 
   onEditorCreated(quill: any) {
     this.quillEditorInstance = quill;
+
+    if (this.pendingOriginText !== null) {
+      quill.setText(this.pendingOriginText);
+      this.pendingOriginText = null;
+    }
 
     quill.root.addEventListener('click', (e: MouseEvent) => {
       const selection = quill.getSelection();
@@ -197,7 +215,7 @@ export class ArticleHtmlComponent implements OnInit {
   }
 
   private scrollSuggestionIntoView(index: number) {
-    const element = this.suggestionRefs.find((_, i) => i === index);
+    const element = this.suggestionRefs.toArray()[index];
     if (element) {
       element.nativeElement.scrollIntoView({
         behavior: 'smooth',
@@ -415,6 +433,10 @@ export class ArticleHtmlComponent implements OnInit {
   }
 
   onAcceptChange(correction: any, index: number) {
+    // Keep searchQuery in sync with editor content before repositioning
+    if (this.quillEditorInstance) {
+      this.searchQuery = this.quillEditorInstance.getText();
+    }
     const { start, end } = correction.position || { start: 0, end: 0 };
 
     if (!this.quillEditorInstance) return;
@@ -469,6 +491,9 @@ export class ArticleHtmlComponent implements OnInit {
       suggestion.original_text,
       'user'
     );
+    if (this.quillEditorInstance) {
+      this.searchQuery = this.quillEditorInstance.getText();
+    }
     if (index !== -1) {
       this.suggestions.splice(index, 1);
     }
@@ -501,7 +526,11 @@ export class ArticleHtmlComponent implements OnInit {
         this.loadingArticle.set(false);
         this.title = res.title;
         this.writingService.setWritingOptions(res);
-        this.quillEditorInstance?.setText(res.origin_document);
+        if (this.quillEditorInstance) {
+          this.quillEditorInstance.setText(res.origin_document);
+        } else {
+          this.pendingOriginText = res.origin_document;
+        }
         // this.onProcessDocument();
       },
       error: () => {
