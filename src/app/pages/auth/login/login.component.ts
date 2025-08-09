@@ -1,4 +1,11 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { InputComponent } from '../../../shared/components/input/input.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { Router, RouterLink } from '@angular/router';
@@ -20,9 +27,14 @@ import { AiToneComponent } from '../ai-tone/ai-tone.component';
   imports: [InputComponent, ButtonComponent, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  loginForm!: FormGroup;
+  loginForm!: FormGroup<{
+    email: FormControl<string>;
+    password: FormControl<string>;
+  }>;
+  hide = signal(true);
   errorMessage = '';
   isLoading = signal(false);
 
@@ -34,10 +46,12 @@ export class LoginComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   ngOnInit() {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required]],
-      password: ['', [Validators.required]],
-      // email: ['customer@example.com', [Validators.required]],
-      // password: ['Customer@2025', [Validators.required]],
+      email: this.fb.nonNullable.control('', {
+        validators: [Validators.required, Validators.email],
+      }),
+      password: this.fb.nonNullable.control('', {
+        validators: [Validators.required],
+      }),
     });
   }
 
@@ -85,13 +99,14 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   onLogin() {
     this.errorMessage = '';
+    if (this.isLoading()) return;
     this.isLoading.set(true);
     if (this.loginForm.invalid) {
       this.helperService.validateAllFormFields(this.loginForm);
       this.isLoading.set(false);
       return;
     }
-    const sub = this.authService.login(this.loginForm.value).subscribe({
+    const sub = this.authService.login(this.loginForm.getRawValue()).subscribe({
       next: (res) => {
         this.isLoading.set(false);
         this.getUserMetaData();
