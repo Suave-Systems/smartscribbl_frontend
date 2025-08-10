@@ -23,6 +23,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   signUpForm!: FormGroup;
   errorMessage = '';
   isLoading = signal(false);
+  hide = signal(true);
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
