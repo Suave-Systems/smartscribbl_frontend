@@ -6,6 +6,7 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { AuthService } from '../../../shared/services/auth.service';
@@ -15,7 +16,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [InputComponent, ButtonComponent, RouterLink],
+  imports: [InputComponent, ButtonComponent, RouterLink, ReactiveFormsModule],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss',
 })
@@ -61,6 +62,8 @@ export class SignupComponent implements OnInit, OnDestroy {
   signUp() {
     this.isLoading.set(true);
     this.errorMessage = '';
+    console.log(this.signUpForm);
+
     // Call API to sign up
     if (this.signUpForm.invalid) {
       this.isLoading.set(false);
