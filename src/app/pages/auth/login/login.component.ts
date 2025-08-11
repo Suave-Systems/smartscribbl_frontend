@@ -13,6 +13,7 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { AuthService } from '../../../shared/services/auth.service';
@@ -24,7 +25,7 @@ import { AiToneComponent } from '../ai-tone/ai-tone.component';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [InputComponent, ButtonComponent, RouterLink],
+  imports: [InputComponent, ButtonComponent, RouterLink, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
