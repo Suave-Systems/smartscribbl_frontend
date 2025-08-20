@@ -125,12 +125,21 @@
 
 
 
-  <div class="flex justify-center gap-4 mt-5">
+  <div class="flex justify-center gap-1 md:gap-4 mt-5">
     <app-button (buttonClick)="onResetDefault()"
-      inputClass="!border-1 !border-primary !py-[0.5rem] !px-[4rem] !bg-white !text-primary">Reset to
-      Default</app-button>
-    <app-button (click)="saveWritingOption()" inputClass="!py-[0.5rem] !px-[4rem]">{{data.mode === 'new' ? 'Start' :
-      'Continue'}} Writing</app-button>
+      inputClass="!border-1 !border-primary !py-[0.5rem] !px-[1.5rem] !md:px-[3rem] !bg-white  !text-primary">Reset
+      <span class="hidden md:inline-block">
+        to
+        Default
+      </span>
+    </app-button>
+    <app-button (click)="saveWritingOption()" inputClass="!py-[0.5rem] !px-[1.5rem] !md:px-[3rem]">{{data.mode === 'new'
+      ? 'Start' :
+      'Continue'}}
+      <span class="hidden md:inline-block">
+        Writing
+      </span>
+    </app-button>
   </div>
 
 </div>
