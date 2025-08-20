@@ -41,6 +41,7 @@ export interface CreateDocumentResponse {
   id: number;
   title: string;
   origin_document: string;
+  origin_document_html: string;
   modified_document: string;
   initial_document: string;
   user: number;
@@ -122,6 +123,7 @@ export interface RepositionWordRequest {
 
 export interface CreateDocumentRequest {
   origin_document: string;
+  origin_document_html: string;
   audient_type?: string;
   tone_type?: string;
   context_type?: string;

@@ -73,7 +73,7 @@ export class CompleteRegThreeComponent {
 
   onSave() {
     this.errorMessage.set('');
-    if (this.selectedOptions.length === 0) {
+    if (this.selectedOptions().length === 0) {
       this.errorMessage.set('Kindly select from the choices below');
       return;
     }

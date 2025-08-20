@@ -1,21 +1,28 @@
 <div class="grid grid-cols-1 h-screen bg-white">
-  <!-- Main Content -->
-  <div class="flex h-[calc(100vh)] px-2 w-full">
-    <app-sidebar class="w-[233px] h-full border-r border-[#E9E9E9]" (hideSideBar)="showSidebar = false"></app-sidebar>
+  <div class="flex h-[100vh] w-full">
+    <!-- Desktop sidebar -->
+    <app-sidebar class="hidden md:block w-[233px] h-full border-r border-[#E9E9E9]"
+      (hideSideBar)="showSidebar = false"></app-sidebar>
 
+    <!-- Mobile sidebar overlay -->
+    @if (showSidebar) {
+    <div class="fixed inset-0 z-40 bg-black/40 md:hidden" (click)="showSidebar = false" aria-hidden="true"></div>
+    <app-sidebar
+      class="fixed inset-y-0 left-0 z-50 w-[85%] max-w-[320px] h-full border-r border-[#E9E9E9] bg-white shadow-lg md:hidden"
+      (hideSideBar)="showSidebar = false"></app-sidebar>
+    }
 
     <!-- Content Area -->
-    <main class="w-full max-w-none">
+    <main class="flex-1 max-w-none">
       <div class="grid grid-cols-1">
         <!-- Header -->
         <div class="h-[50px] w-full">
-          <app-header></app-header>
+          <app-header (toggleSidebar)="showSidebar = !showSidebar"></app-header>
         </div>
-        <div class="h-[calc(100vh-51px)] bg-[#F8F8F8] p-2 overflow-y-scroll">
+        <div class="h-[calc(100vh-50px)] bg-[#F8F8F8] p-2 overflow-y-auto">
           <router-outlet></router-outlet>
         </div>
       </div>
     </main>
-
   </div>
 </div>

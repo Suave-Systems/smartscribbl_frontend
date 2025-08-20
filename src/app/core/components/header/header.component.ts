@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import {
   ActivatedRoute,
   NavigationEnd,
@@ -17,6 +17,8 @@ import { MatMenuModule } from '@angular/material/menu';
 })
 export class HeaderComponent {
   currentPageTitle = '';
+
+  @Output() toggleSidebar = new EventEmitter<void>();
 
   constructor(private router: Router, private route: ActivatedRoute) {
     this.router.events

@@ -76,6 +76,7 @@ export class ArticleHtmlComponent implements OnInit {
   mode: 'create' | 'edit' = 'create';
   articleId = '';
   searchQuery: string = '';
+  searchQueryFormatted: string = '';
   quillEditorInstance: any;
   deltaContent: any = null;
 
@@ -177,7 +178,9 @@ export class ArticleHtmlComponent implements OnInit {
     this.quillEditorInstance = quill;
 
     if (this.pendingOriginText !== null) {
-      quill.setText(this.pendingOriginText);
+      quill.root.innerHTML = this.pendingOriginText;
+
+      // quill.setText(this.pendingOriginText);
       this.pendingOriginText = null;
     }
 
@@ -227,7 +230,8 @@ export class ArticleHtmlComponent implements OnInit {
 
   onDeltaChange(event: any) {
     this.deltaContent = event.editor.getContents();
-    this.searchQuery = event.editor.getText(); // This gives raw text for index-based processing;
+    this.searchQuery = event.editor.getText(); // This gives raw text for index-based processing
+    this.searchQueryFormatted = event.html; // Extract the formatted HTML content
     this.searchQuerySubject.next(this.searchQuery);
     this.resetInactivityTimer();
   }
@@ -527,9 +531,13 @@ export class ArticleHtmlComponent implements OnInit {
         this.title = res.title;
         this.writingService.setWritingOptions(res);
         if (this.quillEditorInstance) {
-          this.quillEditorInstance.setText(res.origin_document);
+          // this.quillEditorInstance.clipboard.dangerouslyPasteHTML(
+          //   res.origin_document_html
+          // );
+          this.quillEditorInstance.root.innerHTML = res.origin_document_html;
+          // this.quillEditorInstance.setText(res.origin_document);
         } else {
-          this.pendingOriginText = res.origin_document;
+          this.pendingOriginText = res.origin_document_html;
         }
         // this.onProcessDocument();
       },
@@ -549,12 +557,14 @@ export class ArticleHtmlComponent implements OnInit {
     const title = this.title || 'Untitled Document';
     return this.writingService.createArticle({
       origin_document: this.searchQuery,
+      origin_document_html: this.searchQueryFormatted,
       ...this.writingOption(),
       title: title,
     });
   }
 
   private onUpdateArticle(): Observable<any> {
+    if (!this.articleId) return of(null);
     if (!this.activeSubscription()) {
       this.handleNoSubscription();
       return of(null);
@@ -564,6 +574,7 @@ export class ArticleHtmlComponent implements OnInit {
       ...this.writingOption(),
       document_id: this.articleId,
       origin_document: this.searchQuery,
+      origin_document_html: this.searchQueryFormatted,
       modified_document: this.searchQuery,
       subscribed_feature: this.selectedFeature,
       title: title,

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AuthService } from '../../../shared/services/auth.service';
 import { Router, RouterLink } from '@angular/router';
@@ -12,6 +12,7 @@ import { NotificationService } from '../../../shared/services/notification.servi
   styleUrl: './sidebar.component.scss',
 })
 export class SidebarComponent {
+  @Output() hideSideBar = new EventEmitter<void>();
   constructor(
     private sanitizer: DomSanitizer,
     private authService: AuthService,
@@ -127,9 +128,11 @@ export class SidebarComponent {
       return;
     }
     this.router.navigate([route.link]);
+    this.hideSideBar.emit();
   }
 
   onLogout() {
     this.authService.logout();
+    this.hideSideBar.emit();
   }
 }

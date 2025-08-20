@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { PageTitleComponent } from '../../shared/components/page-title/page-title.component';
 import { WritingService } from '../../shared/services/writing.service';
@@ -29,6 +29,7 @@ import { PaginationComponent } from '../../shared/components/pagination/paginati
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
   isLoading = signal(false);

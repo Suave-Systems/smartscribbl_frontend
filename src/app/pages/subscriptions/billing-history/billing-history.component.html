@@ -1,9 +1,9 @@
-<div class="p-4">
-  <div class="flex justify-between">
+<div class="p-4 sm:p-6 lg:p-8">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <app-page-title>
       <p page-title>Subscriptions</p>
       @if (currentPlan()) {
-      <p page-description>
+      <p page-description class="break-words">
         {{(currentPlan()?.plan_type) }}
         plan renewable on {{currentPlan()?.next_billing_date | date : 'longDate'}} for N{{currentPlan()?.amount}}</p>
       } @else {
@@ -19,9 +19,9 @@
 
   </div>
 
-  <div class="bg-white rounded-lg p-4 mt-8">
+  <div class="bg-white rounded-lg p-4 mt-8 overflow-x-auto">
     @if (!isLoading() && billingHistoryList() && billingHistoryList().length > 0) {
-    <table class="w-full bg-white divide-y divide-[#EEEFF2]">
+    <table class="min-w-[640px] w-full bg-white divide-y divide-[#EEEFF2]">
       <thead>
         <tr class="text-[#1F2937] text-left text-[12px]/[18px] font-semibold">
           <th class="px-4 py-2">Amount(N)</th>
